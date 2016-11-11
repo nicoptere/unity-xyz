@@ -53,7 +53,10 @@ public class MapObject : MonoBehaviour {
         cam.transform.position = new Vector3(0, 0, -1);
 
         quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        quad.name = "rttMesh";
+
         quad.transform.parent = gameObject.transform.parent;
+        quad.transform.Rotate(new Vector3(90, 0, 0));
         //quad.transform.position = new Vector3(width * 2, 0, -1);
         quad.transform.localScale = new Vector3(width, height, 1);
 
@@ -75,7 +78,7 @@ public class MapObject : MonoBehaviour {
         //Height = height == 0 ? 256 : height;
 
         tiles = new GameObject();
-
+        tiles.name = "tiles";
         map = new Map( this, provider, domains, width, height );
         map.zoom = zoom;
 
