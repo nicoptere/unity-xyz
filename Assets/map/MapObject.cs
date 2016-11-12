@@ -37,11 +37,11 @@ public class MapObject : MonoBehaviour {
     void Start() {
         
         RT = new RenderTexture(width, height, 24, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
-      //  RT.name = "camRtt";
+        RT.name = "camRtt";
         
         cam = gameObject.AddComponent<Camera>() as Camera;
         cam.orthographic = true;
-        cam.orthographicSize = 256;
+        cam.orthographicSize = Mathf.Max( width, height ) / 2;
         cam.targetTexture = RT;
         cam.nearClipPlane = 1f;
         cam.farClipPlane = 1000;
@@ -50,7 +50,7 @@ public class MapObject : MonoBehaviour {
         cam.cullingMask = (1 << LayerMask.NameToLayer("map"));
         cam.transform.parent = gameObject.transform.parent;
         
-        cam.transform.position = new Vector3(0, 0, -1);
+        cam.transform.position = new Vector3(0, 0, -500);
 
         quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         quad.name = "rttMesh";
@@ -69,14 +69,14 @@ public class MapObject : MonoBehaviour {
         provider = provider == null ? "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" : provider;
         Width = width == 0 ? 512 : width;
         Height = height == 0 ? 256 : height;
-        //*/
         provider = "http://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png";
-        domains = new string[]{ "a","b","c","d"};
+        //*/
+        domains = new string[] { "a", "b", "c" };//,"d"};
 
         //provider = provider == null ? "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" : provider;
         //Width = width == 0 ? 512 : width;
         //Height = height == 0 ? 256 : height;
-
+        //provider = "https://tile.mapzen.com/mapzen/vector/v1/all/16/19293/24641.json";
         tiles = new GameObject();
         tiles.name = "tiles";
         map = new Map( this, provider, domains, width, height );
@@ -120,7 +120,7 @@ public class MapObject : MonoBehaviour {
 
     }
 
-    public void addImage(MapTile tile)
+    public void addTile(MapTile tile)
     {
 
         GameObject plane = createMesh();// GameObject.CreatePrimitive(PrimitiveType.Quad );//
@@ -141,41 +141,32 @@ public class MapObject : MonoBehaviour {
     {
 
         WWW www = new WWW(tile.url);
-
         yield return www;
-        
-        Renderer renderer = tile.plane.GetComponent<Renderer>();
-        renderer.material.mainTexture = www.texture;
-        tile.texture = www.texture;
+        tile.onTextureLoaded(www);
 
 
-        /*
-        string provider = "https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png?api_key=" + key;
-
-        string url = tile.getMapUrl( provider, null, tile.tx, tile.ty, map.zoom);
+        string provider = "https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.json?api_key=mapzen-foW3wh2";
+        string url = tile.getMapUrl(provider, null, tile.tx, tile.ty, map.zoom);
         www = new WWW(url);
         yield return www;
 
-        renderer.material.SetTexture("_BumpMap", www.texture );
-        //*/
-
-        renderer.material.shader = Shader.Find( "Unlit/Texture" );
-
-        tile.loaded = true;
-        
+        tile.onJSONLoaded(www, quad);
 
     }
+
     void Update()
     {
-
+        /*
         map.provider = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
         map.domains = new string[] { "a", "b", "c", "d" };
-        map.zoom = 12;
-
+        */
+        map.zoom = 17;
         //map.renderTiles();
-        float dx = Mathf.Sin(Time.time * 0.01f) * 1.1f;
-        float dy = Mathf.Sin(Time.time * 0.01f) * 1.1f;
+        float dx = 0;// Mathf.Sin(Time.time * 0.01f) * 10.1f;
+        float dy = 0;// Mathf.Sin(Time.time * 0.01f) * 10.1f;
 
+       
+        // map.setView(40.70719977f, -74.01516826f, 17 );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
         map.setView(48.80f + dx, 2.32f + dy, map.zoom );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
 
         RenderTexture currentRT = RenderTexture.active;
@@ -194,14 +185,12 @@ public class MapObject : MonoBehaviour {
             map.provider = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
             map.domains = new string[] { "a", "b", "c", "d" };
             map.zoom = 12;
-
         }
         if (Input.GetKey("left"))
         {
             map.provider = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
             map.domains = new string[] { "a", "b", "c" };
             map.zoom = 16;
-
         }
         
     }

@@ -51,13 +51,13 @@ public class Map{
     {
         width = w;
         height = h;
+        showTiles();
     }
 
     public void hideTiles()
     {
         foreach (MapTile tile in tiles)
         {
-            tile.plane.GetComponent<Renderer>().enabled = false;
             tile.plane.SetActive(false);
         }
     }
@@ -74,7 +74,7 @@ public class Map{
             {
                 var p = latLonToPixels(tile.lat, tile.lng);
                 tile.plane.transform.position = new Vector3( Mathf.Floor( p[0] ), -Mathf.Round( p[1] + 0.5F ), 0);
-                tile.plane.GetComponent<Renderer>().enabled = true;
+                //tile.plane.GetComponent<Renderer>().enabled = true;
                 tile.plane.SetActive(true);
             }
         }
@@ -117,7 +117,7 @@ public class Map{
 
                 if (!exist){
                     MapTile tile = new MapTile(this, key);
-                    parent.addImage(tile);
+                    parent.addTile(tile);
                     tiles.Add(tile);
                     keys.Add(key);
                 }
