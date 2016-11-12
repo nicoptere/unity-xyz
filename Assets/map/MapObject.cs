@@ -162,8 +162,8 @@ public class MapObject : MonoBehaviour {
         */
         map.zoom = 17;
         //map.renderTiles();
-        float dx = 0;// Mathf.Sin(Time.time * 0.01f) * 10.1f;
-        float dy = 0;// Mathf.Sin(Time.time * 0.01f) * 10.1f;
+        float dx = Mathf.Sin(Time.time * 0.01f) * .05f;
+        float dy = Mathf.Sin(Time.time * 0.01f) * .05f;
 
        
         // map.setView(40.70719977f, -74.01516826f, 17 );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );

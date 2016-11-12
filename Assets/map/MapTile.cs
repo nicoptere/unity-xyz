@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Assets.map.extra;
 
 public class MapTile{
 
@@ -95,6 +97,24 @@ public class MapTile{
         loaded = true;
     }
 
+
+
+    private List<POI> pois = new List<POI>();
+    public void Update(bool active)
+    {
+        plane.SetActive(active);
+        if( active)
+        {
+            var p = map.latLonToPixels(lat, lng);
+            plane.transform.position = new Vector3(p[0], -p[1], 0);
+            //plane.GetComponent<Renderer>().enabled = true;
+        }
+        foreach ( POI poi in pois)
+        {
+            poi.Update( active );
+        }
+    }
+
     public void onJSONLoaded(WWW www, GameObject parent )
     {
         JSONObject obj = new JSONObject( www.text );
@@ -105,30 +125,31 @@ public class MapTile{
         Debug.Log(obj["pois"]["features"][0]["geometry"]);
         //*/
 
-        Debug.Log( lat +" "+ lng);
-        JSONObject pois = obj["pois"]["features"];
-        for ( int i = 0; i < pois.Count; i++)
+        //Debug.Log( lat +" "+ lng);
+        JSONObject POIData = obj["pois"]["features"];
+        for ( int i = 0; i < POIData.Count; i++)
         {
             //Debug.Log(obj["pois"]["features"][i]["geometry"]["coordinates"][0].n);
-                
-            float plat = pois[i]["geometry"]["coordinates"][1].n;
+                /*
+            float plat = ["geometry"]["coordinates"][1].n;
             float plng = pois[i]["geometry"]["coordinates"][0].n;
 
-            var p = map.latLonToPixels( plat, plng );
-            Debug.Log(plat+"  "+ plng + " " + p[0]+"  "+ p[1]);
+            var p = map.latLonToPixels(plat, plng);
+            Debug.Log(plat + "  " + plng + " " + p[0] + "  " + p[1]);
 
             float upScale = 10;
-            Vector3 scale = new Vector3( 1/parent.transform.localScale.x * upScale, upScale, 1 / parent.transform.localScale.y * upScale);
+            Vector3 scale = new Vector3(1 / parent.transform.localScale.x * upScale, upScale, 1 / parent.transform.localScale.y * upScale);
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
             sphere.transform.parent = parent.transform;// map.parent.transform.parent;
-            sphere.transform.position = new Vector3( p[0], 0, -p[1]);
+            sphere.transform.position = new Vector3(p[0], 0, -p[1]);
             sphere.transform.localScale = scale;
             //sphere.layer = 8;
 
             Renderer renderer = sphere.GetComponent<Renderer>();
             renderer.material.color = new Color(1, 0, 0);
-
+            */
+            pois.Add( new POI( this, POIData[i], parent ) );
         }
 
         /*

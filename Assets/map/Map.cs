@@ -58,7 +58,7 @@ public class Map{
     {
         foreach (MapTile tile in tiles)
         {
-            tile.plane.SetActive(false);
+            tile.Update(false);
         }
     }
 
@@ -72,10 +72,7 @@ public class Map{
         {
             if (tile.loaded && tile.zoom == zoom)
             {
-                var p = latLonToPixels(tile.lat, tile.lng);
-                tile.plane.transform.position = new Vector3( Mathf.Floor( p[0] ), -Mathf.Round( p[1] + 0.5F ), 0);
-                //tile.plane.GetComponent<Renderer>().enabled = true;
-                tile.plane.SetActive(true);
+                tile.Update(true);
             }
         }
     }
