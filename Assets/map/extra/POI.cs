@@ -1,4 +1,4 @@
-﻿using System;
+﻿//using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +25,7 @@ namespace Assets.map.extra
             lat = data["geometry"]["coordinates"][1].n;
             lng = data["geometry"]["coordinates"][0].n;
             
-            float upScale = 10;
+            float upScale = 10 + Random.value * 30;
             Vector3 scale = new Vector3(1 / parent.transform.localScale.x * upScale, upScale, 1 / parent.transform.localScale.y * upScale);
             geom = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             geom.transform.parent = this.parent.transform;
@@ -33,6 +33,8 @@ namespace Assets.map.extra
 
             Renderer renderer = geom.GetComponent<Renderer>();
             renderer.material.color = new Color( 0, 1, 0);
+            renderer.material.SetFloat("_Metallic", 1);
+            renderer.material.SetFloat("_Glossiness", 0 );
 
             //Update();
 
