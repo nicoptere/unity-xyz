@@ -147,7 +147,7 @@ public class MapTile{
             if( BuildingData[i]["geometry"]["type"].str == "Polygon")
             {
                 buildings.Add(new Extrusion(this, BuildingData[i]["geometry"], parent));
-            //    lines.Add(new Lines(this, BuildingData[i]["geometry"], parent));
+                lines.Add(new Lines(this, BuildingData[i]["geometry"], parent));
             }
         }
 

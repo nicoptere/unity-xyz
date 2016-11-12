@@ -25,17 +25,17 @@ namespace Assets.map.extra
             lat = data["geometry"]["coordinates"][1].n;
             lng = data["geometry"]["coordinates"][0].n;
             
-            float upScale = 5 + Random.value * 15;
+            float upScale = 2 + Random.value * 5;
             Vector3 scale = new Vector3(1 / parent.transform.localScale.x * upScale, upScale, 1 / parent.transform.localScale.y * upScale);
             geom = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             geom.transform.parent = this.parent.transform;
             geom.transform.localScale = scale;
 
             Renderer renderer = geom.GetComponent<Renderer>();
-            renderer.material.color = new Color( 0, 1, 0);
-            renderer.material.SetFloat("_Metallic", 1);
-            renderer.material.SetFloat("_Glossiness", 0 );
-
+            renderer.material.color = new Color( 0, 0, 0 );
+            renderer.material.SetFloat("_Metallic",  .5f);
+            renderer.material.SetFloat("_Glossiness", .8f );
+            renderer.material.SetColor("_EmissionColor", new Color(1, 1, .75f));
             //Update();
 
         }
@@ -43,7 +43,7 @@ namespace Assets.map.extra
 
         public void Update( bool active )
         {
-                geom.SetActive( active );
+            geom.SetActive( active );
             if (active)
             {
                 var p = tile.map.latLonToPixels( lat, lng );
@@ -53,9 +53,11 @@ namespace Assets.map.extra
                 if (-p[1] < -tile.map.height/2 || -p[1] > tile.map.height/2) active = false;
 
             }
+            /*
             Renderer renderer = geom.GetComponent<Renderer>();
-            renderer.material.color = active == true ? new Color(0,1, 0) : new Color( 1,0, 0);
-
+            renderer.material.color = active == true ? new Color(1, 1, .75f) : new Color(0, 0, 0);
+            renderer.material.SetColor( "_EmissionColor", active == true ? new Color(1, 1, .75f) : new Color(0, 0, 0) );
+            //*/
 
         }
 

@@ -63,6 +63,7 @@ public class MapObject : MonoBehaviour {
         Renderer renderer = quad.GetComponent<Renderer>();
         renderer.material.mainTexture = RT;
         renderer.material.shader = Shader.Find("Unlit/Texture");
+        renderer.enabled = false;        
 
         //
         /*
@@ -79,6 +80,8 @@ public class MapObject : MonoBehaviour {
         //provider = "https://tile.mapzen.com/mapzen/vector/v1/all/16/19293/24641.json";
         tiles = new GameObject();
         tiles.name = "tiles";
+        tiles.SetActive(false);
+
         map = new Map( this, provider, domains, width, height );
         map.zoom = zoom;
 
@@ -130,7 +133,6 @@ public class MapObject : MonoBehaviour {
 
         plane.transform.parent = tiles.transform;
         plane.transform.localScale = new Vector3( 256f, 256f, 1);
-
         tile.plane = plane;
 
         StartCoroutine( loadImage(tile) );
@@ -150,7 +152,7 @@ public class MapObject : MonoBehaviour {
         yield return www;
 
         tile.onJSONLoaded(www, quad);
-
+        
     }
 
     void Update()
@@ -165,13 +167,15 @@ public class MapObject : MonoBehaviour {
         float dx = 0;//athf.Sin(Time.time * 0.01f) * .05f;
         float dy = 0;//Mathf.Sin(Time.time * 0.01f) * .05f;
         
-        map.setView(40.70719977f, -74.01516826f, 17 );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
-        //map.setView(48.80f + dx, 2.32f + dy, map.zoom );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
+        //map.setView(40.70719977f, -74.01516826f, 17 );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
+        map.setView(48.80f + dx, 2.32f + dy, map.zoom );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
 
+        /*
         RenderTexture currentRT = RenderTexture.active;
         RenderTexture.active = cam.targetTexture;
         cam.Render();
         RenderTexture.active = currentRT;
+        //*/
 
         if (Input.GetKey("up"))
         {

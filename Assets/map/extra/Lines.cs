@@ -31,18 +31,18 @@ namespace Assets.map.extra
                 float x = pos[0] - tile.map.tileSize / 2;
                 float y = -pos[1] + tile.map.tileSize / 2;
 
-                float d = Mathf.Max( 1 - Mathf.Sqrt(-x * -x + -y * -y) / 256, 0 );
+                float d = Mathf.Max( 1 - Mathf.Sqrt(-x * -x + -y * -y) / ( tile.map.width / 2 ), 0 );
                 Vector3 v = new Vector3( x, h * d, y );
                 vertices[ i ] = v;
             }
 
-            Color c =new Color( 0,0,0 );
+            Color c =new Color( 0,.2f,.8f );
             Color c1 = Color.yellow;
             geom = new GameObject();
             geom.transform.parent = parent.transform;
 
             LineRenderer lineRenderer = geom.AddComponent<LineRenderer>();
-            lineRenderer.material = new Material( Shader.Find( "Unlit/Color" ) );// Shader.Find("Particles/Additive"));//
+            lineRenderer.material = new Material(  Shader.Find("Particles/Additive"));//Shader.Find( "Unlit/Color" ) );//
             lineRenderer.material.color = c;
             //lineRenderer.SetColors(c1, c);
             lineRenderer.SetWidth(1.0F, 1.0F);
