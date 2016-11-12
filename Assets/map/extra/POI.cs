@@ -25,7 +25,7 @@ namespace Assets.map.extra
             lat = data["geometry"]["coordinates"][1].n;
             lng = data["geometry"]["coordinates"][0].n;
             
-            float upScale = 10 + Random.value * 30;
+            float upScale = 5 + Random.value * 15;
             Vector3 scale = new Vector3(1 / parent.transform.localScale.x * upScale, upScale, 1 / parent.transform.localScale.y * upScale);
             geom = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             geom.transform.parent = this.parent.transform;

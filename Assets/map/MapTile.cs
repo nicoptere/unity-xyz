@@ -21,7 +21,11 @@ public class MapTile{
     public float zoom = 0;
     
     public string url;
-    
+
+    private List<POI> pois = new List<POI>();
+    private List<Extrusion> buildings = new List<Extrusion>();
+    private List<Lines> lines = new List<Lines>();
+
     public MapTile( Map map, string quadKey = null ){
 
         this.map = map;
@@ -98,20 +102,22 @@ public class MapTile{
     }
 
 
-
-    private List<POI> pois = new List<POI>();
     public void Update(bool active)
     {
         plane.SetActive(active);
         if( active)
         {
-            var p = map.latLonToPixels(lat, lng);
+            float[] p = map.latLonToPixels(lat, lng);
             plane.transform.position = new Vector3(p[0], -p[1], 0);
             //plane.GetComponent<Renderer>().enabled = true;
         }
         foreach ( POI poi in pois)
         {
             poi.Update( active );
+        }
+        foreach (Extrusion building in buildings)
+        {
+            building.Update(active);
         }
     }
 
@@ -129,28 +135,25 @@ public class MapTile{
         JSONObject POIData = obj["pois"]["features"];
         for ( int i = 0; i < POIData.Count; i++)
         {
-            //Debug.Log(obj["pois"]["features"][i]["geometry"]["coordinates"][0].n);
-                /*
-            float plat = ["geometry"]["coordinates"][1].n;
-            float plng = pois[i]["geometry"]["coordinates"][0].n;
-
-            var p = map.latLonToPixels(plat, plng);
-            Debug.Log(plat + "  " + plng + " " + p[0] + "  " + p[1]);
-
-            float upScale = 10;
-            Vector3 scale = new Vector3(1 / parent.transform.localScale.x * upScale, upScale, 1 / parent.transform.localScale.y * upScale);
-            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-
-            sphere.transform.parent = parent.transform;// map.parent.transform.parent;
-            sphere.transform.position = new Vector3(p[0], 0, -p[1]);
-            sphere.transform.localScale = scale;
-            //sphere.layer = 8;
-
-            Renderer renderer = sphere.GetComponent<Renderer>();
-            renderer.material.color = new Color(1, 0, 0);
-            */
             pois.Add( new POI( this, POIData[i], parent ) );
         }
+
+        //JSONObject BuildingData = obj["building"]["features"];
+        //Debug.Log(BuildingData);
+        
+        JSONObject BuildingData = obj["buildings"]["features"];
+        for (int i = 0; i < BuildingData.Count; i++)
+        {
+            if( BuildingData[i]["geometry"]["type"].str == "Polygon")
+            {
+                buildings.Add(new Extrusion(this, BuildingData[i]["geometry"], parent));
+            //    lines.Add(new Lines(this, BuildingData[i]["geometry"], parent));
+            }
+        }
+
+
+        //*/
+
 
         /*
         for (int i = 0; i < obj.list.Count; i++)
