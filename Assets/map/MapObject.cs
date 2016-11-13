@@ -13,6 +13,7 @@ public class MapObject : MonoBehaviour {
     public float longitude;
     public float zoom;
 
+    public MapTile titi;
     public string[] domains;
 
     GameObject tiles;
@@ -49,8 +50,7 @@ public class MapObject : MonoBehaviour {
 
         cam.cullingMask = (1 << LayerMask.NameToLayer("map"));
         cam.transform.parent = gameObject.transform.parent;
-        
-        cam.transform.position = new Vector3(0, 0, -500);
+        cam.transform.position = new Vector3(0, 0, -0);
 
         quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         quad.name = "rttMesh";
@@ -162,13 +162,13 @@ public class MapObject : MonoBehaviour {
         map.provider = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
         map.domains = new string[] { "a", "b", "c", "d" };
         */
-        map.zoom = 17;
+        map.zoom = 15;
         //map.renderTiles();
         float dx = 0;//athf.Sin(Time.time * 0.01f) * .05f;
         float dy = 0;//Mathf.Sin(Time.time * 0.01f) * .05f;
         
-        //map.setView(40.70719977f, -74.01516826f, 17 );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
-        map.setView(48.80f + dx, 2.32f + dy, map.zoom );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
+        map.setView(40.70719977f, -74.01516826f, 15 );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
+        //map.setView(48.80f + dx, 2.32f + dy, map.zoom );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
 
         /*
         RenderTexture currentRT = RenderTexture.active;

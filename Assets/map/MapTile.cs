@@ -23,6 +23,8 @@ public class MapTile{
     public string url;
 
     private List<POI> pois = new List<POI>();
+    private List<TileExtrusion> blocks = new List<TileExtrusion>();
+    private List<TileExtrusion> waters = new List<TileExtrusion>();
     private List<Extrusion> buildings = new List<Extrusion>();
     private List<Lines> lines = new List<Lines>();
 
@@ -135,7 +137,7 @@ public class MapTile{
         JSONObject POIData = obj["pois"]["features"];
         for ( int i = 0; i < POIData.Count; i++)
         {
-            pois.Add( new POI( this, POIData[i], parent ) );
+            //pois.Add( new POI( this, POIData[i], parent ) );
         }
 
         //JSONObject BuildingData = obj["building"]["features"];
@@ -146,13 +148,21 @@ public class MapTile{
         {
             if( BuildingData[i]["geometry"]["type"].str == "Polygon")
             {
-                buildings.Add(new Extrusion(this, BuildingData[i]["geometry"], parent));
-                lines.Add(new Lines(this, BuildingData[i]["geometry"], parent));
+                //buildings.Add(new Extrusion(this, BuildingData[i]["geometry"], parent));
+                //lines.Add(new Lines(this, BuildingData[i]["geometry"], parent));
             }
         }
+        
 
 
-        //*/
+        JSONObject BlocksData = obj["buildings"]["features"];
+        blocks.Add(new TileExtrusion(this, BlocksData, parent));
+        
+        JSONObject WaterData = obj["water"]["features"];
+        waters.Add(new TileExtrusion(this, WaterData, parent, false));
+        
+        JSONObject EarthData = obj["earth"]["features"];
+        waters.Add(new TileExtrusion(this, EarthData, parent, false));
 
 
         /*
