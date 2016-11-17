@@ -13,7 +13,7 @@ namespace Assets.map.extra
         static private List<int> built = new List<int>();
 
         float lat, lng;
-        public TileExtrusion(MapTile tile, JSONObject data, GameObject parent, bool checkId = true )
+        public TileExtrusion(MapTile tile, JSONObject data, GameObject parent, Color color, bool checkId = true )
         {
 
             this.tile = tile;
@@ -129,7 +129,7 @@ namespace Assets.map.extra
 
             Renderer renderer = geom.GetComponent<Renderer>();
             //renderer.material = new Material(Shader.Find("Toon/Lit Outline"));// Shader.Find("Unlit/Color"));// 
-            //renderer.material.color = new Color(0.2f, 0.2f, 0.2f);
+            renderer.material.color = color;// new Color(0.1f, 0.1f, 0.1f);
             //renderer.material.SetFloat("_Outline", .001f);
 
             //renderer.material = new Material( Shader.Find("Unlit/Color"));

@@ -148,7 +148,20 @@ public class MapTile{
         {
             if( BuildingData[i]["geometry"]["type"].str == "Polygon")
             {
-                //buildings.Add(new Extrusion(this, BuildingData[i]["geometry"], parent));
+                float h = 3;
+
+
+                if (BuildingData[i]["properties"]["height"] != null)
+                {
+                    h = BuildingData[i]["properties"]["height"].n;
+                    //Debug.Log("height" + h);
+                }
+                if (BuildingData[i]["properties"]["min_height"] != null)
+                {
+                    h = BuildingData[i]["properties"]["min_height"].n;
+                    //Debug.Log("min_height" + h);
+                }
+                buildings.Add(new Extrusion(this, BuildingData[i]["geometry"], parent, h ));
                 //lines.Add(new Lines(this, BuildingData[i]["geometry"], parent));
             }
         }
@@ -156,13 +169,13 @@ public class MapTile{
 
 
         JSONObject BlocksData = obj["buildings"]["features"];
-        blocks.Add(new TileExtrusion(this, BlocksData, parent));
+        blocks.Add(new TileExtrusion(this, BlocksData, parent, new Color( .1f,.1f,.1f ) ));
         
         JSONObject WaterData = obj["water"]["features"];
-        waters.Add(new TileExtrusion(this, WaterData, parent, false));
+        waters.Add(new TileExtrusion(this, WaterData, parent, new Color(.1f, .6f, .95f), false));
         
         JSONObject EarthData = obj["earth"]["features"];
-        waters.Add(new TileExtrusion(this, EarthData, parent, false));
+        waters.Add(new TileExtrusion(this, EarthData, parent, new Color(.0f, .8f, .1f), false));
 
 
         /*

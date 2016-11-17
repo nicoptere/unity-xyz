@@ -11,7 +11,7 @@ namespace Assets.map.extra
         GameObject geom;
         Vector2 center;
         float lat, lng;
-        public Extrusion(MapTile tile, JSONObject data, GameObject parent)
+        public Extrusion(MapTile tile, JSONObject data, GameObject parent, float height )
         {
 
             this.tile = tile;
@@ -38,7 +38,7 @@ namespace Assets.map.extra
             }
 
             float thickness = 0;
-            float h = 250 * Random.value;
+            float h = height * 1 / tile.map.resolution( tile.map.zoom );// 250 * Random.value;
             Vector3[] vertices = new Vector3[ count * 2 ];
             for (int i = 0; i < count * 2; i++)
             {
@@ -54,10 +54,11 @@ namespace Assets.map.extra
 
                 float x = vertices2D[i % count].x - tile.map.tileSize / 2; 
                 float y = vertices2D[i % count].y + tile.map.tileSize / 2;
-
+                /*
                 float d = Mathf.Max(1 - Mathf.Sqrt(-x * -x + -y * -y) / ( tile.map.width / 2 ), 0);
                 thickness = Mathf.Max(thickness, d);
-                Vector3 v = new Vector3(x, (i < count) ? 0 : h * d, y);
+                //*/
+                Vector3 v = new Vector3(x, (i < count) ? 0 : h, y);
                 vertices[i] = v;
 
 
@@ -82,12 +83,14 @@ namespace Assets.map.extra
             
             MeshFilter filter = geom.AddComponent(typeof(MeshFilter)) as MeshFilter;
             filter.mesh = msh;
-
             Renderer renderer = geom.GetComponent<Renderer>();
+            renderer.enabled = false;
+            /*
             renderer.material.color = new Color(0.1f, .1f, 0.1f);
             renderer.material.SetFloat("_Metallic", .5f);
             renderer.material.SetFloat("_Glossiness", .8f);
-            
+            //*/
+
             Color c = new Color(1,.65f,0);
             Color c1 = Color.yellow;
             LineRenderer lineRenderer = geom.AddComponent<LineRenderer>();
@@ -95,7 +98,7 @@ namespace Assets.map.extra
             //lineRenderer.material.color = c;
             
             lineRenderer.SetColors(c1, c);
-            lineRenderer.SetWidth( 1 + thickness * 4, 1 + thickness * 4 );
+            lineRenderer.SetWidth( 1, 1 );
             lineRenderer.SetVertexCount(vertices.Length);
             lineRenderer.SetPositions(vertices);
         }

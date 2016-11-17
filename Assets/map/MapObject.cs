@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class MapObject : MonoBehaviour {
 
     public string provider;
+    public string[] domains;
 
     public int width = 512;
     public int height = 512;
@@ -12,14 +13,11 @@ public class MapObject : MonoBehaviour {
     public float latitude;
     public float longitude;
     public float zoom;
-
-    public MapTile titi;
-    public string[] domains;
-
-    GameObject tiles;
+    
     private Map map;
-    private RenderTexture RT;
     private Camera cam;
+    private RenderTexture RT;
+    private GameObject tiles;
     private GameObject quad;
     
     private void resize(int width, int height)
@@ -63,7 +61,7 @@ public class MapObject : MonoBehaviour {
         Renderer renderer = quad.GetComponent<Renderer>();
         renderer.material.mainTexture = RT;
         renderer.material.shader = Shader.Find("Unlit/Texture");
-        renderer.enabled = false;        
+        renderer.enabled = false;
 
         //
         /*
@@ -72,16 +70,16 @@ public class MapObject : MonoBehaviour {
         Height = height == 0 ? 256 : height;
         provider = "http://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png";
         //*/
-        domains = new string[] { "a", "b", "c" };//,"d"};
+        //domains = new string[] { "a", "b", "c" };//,"d"};
 
         //provider = provider == null ? "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" : provider;
         //Width = width == 0 ? 512 : width;
         //Height = height == 0 ? 256 : height;
         //provider = "https://tile.mapzen.com/mapzen/vector/v1/all/16/19293/24641.json";
+
         tiles = new GameObject();
         tiles.name = "tiles";
         tiles.SetActive(false);
-
         map = new Map( this, provider, domains, width, height );
         map.zoom = zoom;
 
@@ -126,15 +124,10 @@ public class MapObject : MonoBehaviour {
     public void addTile(MapTile tile)
     {
 
-        GameObject plane = createMesh();// GameObject.CreatePrimitive(PrimitiveType.Quad );//
-
-        //plane.transform.parent = gameObject.transform;
-        //plane.transform.position = new Vector3(tile.px, 0, tile.py);
-
+        GameObject plane = createMesh();// GameObject.CreatePrimitive(PrimitiveType.Quad );
         plane.transform.parent = tiles.transform;
         plane.transform.localScale = new Vector3( 256f, 256f, 1);
         tile.plane = plane;
-
         StartCoroutine( loadImage(tile) );
 
     }
@@ -166,10 +159,11 @@ public class MapObject : MonoBehaviour {
         //map.renderTiles();
         float dx = 0;//athf.Sin(Time.time * 0.01f) * .05f;
         float dy = 0;//Mathf.Sin(Time.time * 0.01f) * .05f;
-        
-        map.setView(40.70719977f, -74.01516826f, 15 );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
+
+        //map.setView(40.70719977f, -74.01516826f, 15 );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
         //map.setView(48.80f + dx, 2.32f + dy, map.zoom );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
 
+        map.setView( latitude, longitude, map.zoom );
         /*
         RenderTexture currentRT = RenderTexture.active;
         RenderTexture.active = cam.targetTexture;
