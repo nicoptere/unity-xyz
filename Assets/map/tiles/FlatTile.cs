@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-namespace Assets.map.extra
+namespace Assets.map.tiles
 {
     public class FlatTile
     {

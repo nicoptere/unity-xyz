@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Assets.map;
+using Assets.map.tiles;
 
-public class Map{
+public class Map : MonoBehaviour{
 
     public MapObject parent;
 
@@ -14,7 +16,8 @@ public class Map{
 
     List<MapTile> tiles;
     List<string> keys;
-    
+    private TileLoader tileLoader;
+
     public Map(MapObject parent, string provider = null, string[] domains = null, int width = 512, int height = 512 )
     {
         this.parent = parent;
@@ -35,9 +38,12 @@ public class Map{
         zoom = 0;
 
         //loading
+        tileLoader = new GameObject().AddComponent<TileLoader>();
+        tileLoader.init( this, parent );
         tiles = new List<MapTile>();
         keys = new List<string>();
         setSize(width, height);
+
 
     }
     
@@ -51,7 +57,6 @@ public class Map{
     {
         width = w;
         height = h;
-        showTiles();
     }
 
     public void hideTiles()
@@ -64,10 +69,8 @@ public class Map{
 
     public void showTiles()
     {
-
         hideTiles();
-
-        List<MapTile> visible = viewRectTiles();
+        List<MapTile> visible = getVisibleTiles();
         foreach (MapTile tile in visible)
         {
             if (tile.loaded && tile.zoom == zoom)
@@ -88,11 +91,11 @@ public class Map{
         latitude = lat;
         longitude = lng;
         this.zoom = Mathf.Max( 1, Mathf.Min( 21, zoom ) );
-        viewRectTiles();
+        getVisibleTiles();
         showTiles();
     }
 
-    private List<MapTile> viewRectTiles()
+    private List<MapTile> getVisibleTiles()
     {
         float[] bounds = viewRectToLatLng(latitude, longitude, zoom);
         int[] tl = mercator.latLonToTile(-bounds[0], bounds[1], zoom);
@@ -102,8 +105,9 @@ public class Map{
         {
             for (int j = tl[1]; j <= br[1]; j++)
             {
-                string key = mercator.tileXYToQuadKey(i, j, zoom);
 
+                string key = mercator.tileXYToQuadKey(i, j, zoom);
+                
                 bool exist = false;
                 foreach (MapTile tile in tiles){
                     if (key == tile.quadKey){
@@ -113,8 +117,10 @@ public class Map{
                 }
 
                 if (!exist){
-                    MapTile tile = new MapTile(this, key);
-                    //parent.addTile(tile);
+
+                    MapTile tile = new TileImage(this, key);
+
+                    tileLoader.addTile(tile);
                     tiles.Add(tile);
                     keys.Add(key);
                 }
@@ -136,10 +142,8 @@ public class Map{
         return mercator.resolution(zoom);
     }
     
-    /**
-     * returns the bounds of the view rect as an array of the latitude/longitude in degrees
-     * @returns [ top left lat, top left lon, bottom right lat, bottom right lon]
-     */
+
+
     public float[] viewRectToLatLng(float lat, float lng, float zoom)
     {
         float[] c = mercator.latLngToPixels(-lat, lng, zoom);
@@ -148,13 +152,6 @@ public class Map{
         return new float[] { -tl[0], tl[1], -br[0], br[1] };
     }
     
-    /**
-     * converts local X & Y coordinates and zoom level to latitude and longitude
-     * @param x X position on the canvas
-     * @param y Y position on the canvas
-     * @param zoom zoom level (optional, falls back to the map's current zoom level)
-     * @returns {*} array[ lat, lon ] in degrees
-     */
     public float[] pixelsToLatLon(float x, float y)
     {
         float[] c = mercator.latLngToPixels(-latitude, longitude, zoom);

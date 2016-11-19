@@ -14,14 +14,15 @@ public class MapObject : MonoBehaviour {
     public float longitude;
     public float zoom;
 
+    public string layerName = "map";
     public bool renderToTexture = false;
 
     private Map map;
     private Camera cam;
     private RenderTexture RT;
 
-    private GameObject tiles;
-    private GameObject quad;
+    public GameObject tiles;
+    public GameObject quad;
     
     void Awake()
     {
@@ -62,7 +63,7 @@ public class MapObject : MonoBehaviour {
 
         //map object
         map = new Map(this, provider, domains, width, height);
-
+        
     }
 
     void Start() {
@@ -72,6 +73,15 @@ public class MapObject : MonoBehaviour {
     {
         return;
         map.setView( latitude, longitude, zoom );
+
+        if( renderToTexture)
+        {
+            RenderTexture currentRT = RenderTexture.active;
+            RenderTexture.active = cam.targetTexture;
+            cam.Render();
+            RenderTexture.active = currentRT;
+
+        }
 
         /*
         

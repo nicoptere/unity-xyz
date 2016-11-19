@@ -14,7 +14,7 @@ using System.Collections.Generic;
 /*  97.12.09    Ian Garton    Final Implementation                   */
 /*-------------------------------------------------------------------*/
 //http://cgm.cs.mcgill.ca/~godfried/teaching/cg-projects/97/Ian//algorithm2.html
-namespace Assets.map.extra
+namespace Assets.map.tiles
 {
 
     public class Earcut{

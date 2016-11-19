@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.map.extra
+namespace Assets.map.tiles
 {
     public class Extrusion
     {
