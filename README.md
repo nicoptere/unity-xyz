@@ -1,2 +1,6 @@
 # unity-xyz
-C# lightweight tile viewer
+a lightweight c# XYZ tile viewer (slippy maps).
+
+
+
+

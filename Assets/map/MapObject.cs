@@ -63,7 +63,8 @@ public class MapObject : MonoBehaviour {
             Renderer renderer = rttMesh.GetComponent<Renderer>();
             renderer.material.mainTexture = RT;
             renderer.material.shader = Shader.Find("Unlit/Texture");
-            
+
+            vectorTiles = false;
         }
 
         if( vectorTiles)
