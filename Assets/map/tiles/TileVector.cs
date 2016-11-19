@@ -11,7 +11,6 @@ namespace Assets.map
         private List<TileExtrusion> blocks = new List<TileExtrusion>();
         private List<TileFlat> flatTiles = new List<TileFlat>();
         private List<Extrusion> buildings = new List<Extrusion>();
-        private List<Lines> lines = new List<Lines>();
 
         public TileVector( Map map, string quadKey)
         {
@@ -60,7 +59,7 @@ namespace Assets.map
             flatTiles.Add(new TileFlat(this, EarthData, map.parent.tiles, new Color(.0f, .8f, .1f), 0, false));
 
             JSONObject WaterData = obj["water"]["features"];
-            flatTiles.Add(new TileFlat(this, WaterData, map.parent.tiles, new Color(.1f, .6f, .95f), -1, false));
+            flatTiles.Add(new TileFlat(this, WaterData, map.parent.tiles, new Color(.1f, .6f, .95f), 0, false));
             
         }
         

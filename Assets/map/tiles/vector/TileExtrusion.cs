@@ -29,7 +29,7 @@ namespace Assets.map
             for (int i = 0; i < data.Count; i++)
             {
                 float h = 3;
-                if( checkId )
+                if( checkId && data[i]["properties"]["id"].n != null )
                 {
                     h *= 10 * Random.value;
                     int id = (int)data[i]["properties"]["id"].n;
@@ -81,7 +81,7 @@ namespace Assets.map
                         {
                             float x = vertices2D[j % count].x - tile.map.tileSize / 2;
                             float y = vertices2D[j % count].y + tile.map.tileSize / 2;
-                            Vector3 v = new Vector3(x, (j >= count) ? h : 0, y);
+                            Vector3 v = new Vector3(x, (j >= count) ? h + 5: 5, y);
                             tmpVertices.Add(v);
                         }
                     }

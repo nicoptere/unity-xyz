@@ -25,7 +25,6 @@ public class Map{
         mercator = new Mercator(tileSize);
 
         this.provider = provider != null ? provider : "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-        if( parent.vectorTiles )this.provider = "https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.json?api_key=mapzen-foW3wh2";
 
         this.domains = domains != null ? domains : new string[] { "a", "b", "c" };
         this.width = width;

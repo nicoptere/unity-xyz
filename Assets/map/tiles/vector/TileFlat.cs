@@ -100,13 +100,12 @@ namespace Assets.map
             {
                 indices[i] = tmp[i];
             }
-
             tmp.Reverse();
             for (int i = 0; i < tmp.Length; i++)
             {
                 indices[i] = tmp[i];
             }
-            //*/
+
             // Create the mesh
             Mesh msh = new Mesh();
             msh.vertices = tmpVertices.ToArray();
@@ -137,50 +136,7 @@ namespace Assets.map
             renderer.material.SetFloat("_Glossiness", .8f);
             
         }
-
-        private int[] triangulate( List<Vector2> vertices)
-        {
-            // Create an instance of the tessellator. Can be reused.
-            var tess = new LibTessDotNet.Tess();
-
-            // Construct the contour from inputData.
-            // A polygon can be composed of multiple contours which are all tessellated at the same time.
-            int numPoints = vertices.Count;
-            Debug.Log("numpoints " + numPoints);
-            var contour = new LibTessDotNet.ContourVertex[numPoints];
-            for (int i = 0; i < numPoints; i++)
-            {
-                // NOTE : Z is here for convenience if you want to keep a 3D vertex position throughout the tessellation process but only X and Y are important.
-                contour[i].Position = new LibTessDotNet.Vec3 { X = vertices[i].x, Y = vertices[i].y, Z = 0 };
-                //Debug.Log("contour i: " + contour[i].Position.X + " " + contour[i].Position.Y);
-
-            }
-            // Add the contour with a specific orientation, use "Original" if you want to keep the input orientation.
-            tess.AddContour(contour, LibTessDotNet.ContourOrientation.Original );
-
-            // Tessellate!
-            // The winding rule determines how the different contours are combined together.
-            // See http://www.glprogramming.com/red/chapter11.html (section "Winding Numbers and Winding Rules") for more information.
-            // If you want triangles as output, you need to use "Polygons" type as output and 3 vertices per polygon.
-            //tess.Tessellate(LibTessDotNet.WindingRule.EvenOdd, LibTessDotNet.ElementType.Polygons, 3, VertexCombine);
-
-            // Same call but the last callback is optional. Data will be null because no interpolated data would have been generated.
-            tess.Tessellate(LibTessDotNet.WindingRule.EvenOdd, LibTessDotNet.ElementType.Polygons, 3); // Some vertices will have null Data in this case.
-            
-            int numtriangles = tess.ElementCount;
-            Debug.Log("numTriangles " + numtriangles);
-            for (int i = 0; i < numtriangles; i++)
-            {
-                //var v0 = tess.vertices[tess.elements[i * 3]].position;
-                //var v1 = tess.vertices[tess.elements[i * 3 + 1]].position;
-                //var v2 = tess.vertices[tess.elements[i * 3 + 2]].position;
-                //Debug.Log(tess.Elements[i * 3] + " " + tess.Elements[i * 3 + 1] + " " + tess.Elements[i * 3 + 2]);
-
-            }
-            return tess.Elements;
-
-        }
-
+        
         public void Update(bool active)
         {
             geom.SetActive(active);
@@ -188,15 +144,7 @@ namespace Assets.map
             {
                 float[] p = tile.map.latLonToPixels(lat, lng);
                 geom.transform.position = new Vector3(p[0], 0, -p[1]);
-
-                //if (p[0] < -tile.map.width / 2 || p[0] > tile.map.width / 2) active = false;
-                //if (-p[1] < -tile.map.height / 2 || -p[1] > tile.map.height / 2) active = false;
-
             }
-            //Renderer renderer = geom.GetComponent<Renderer>();
-            //renderer.material.color = active == true ? new Color(1, 1, 0) : new Color(0, .3f, .6f);
-
-
         }
 
     }

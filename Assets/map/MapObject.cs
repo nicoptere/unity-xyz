@@ -20,7 +20,8 @@ public class MapObject : MonoBehaviour {
     public string layerName = "map";
 
     public bool vectorTiles = true;
-    
+    public string vectorTileUrl = "https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.json?api_key=mapzen-foW3wh2";
+
     private Map map;
     private Camera cam;
     private RenderTexture RT;
@@ -64,6 +65,19 @@ public class MapObject : MonoBehaviour {
             renderer.material.shader = Shader.Find("Unlit/Texture");
             
         }
+
+        if( vectorTiles)
+        {
+
+            if (vectorTileUrl == "")
+            {
+                vectorTiles = false;
+            }else
+            {
+                provider = vectorTileUrl;
+            }
+        }
+
         //map object
         map = new Map(this, provider, domains, width, height);
         
@@ -85,6 +99,30 @@ public class MapObject : MonoBehaviour {
             RenderTexture.active = currentRT;
 
         }
+
+        /*
+        float[] delta = map.mercator.pixelsToLatLng(0, 250, zoom);
+        delta[0] -= latitude;
+        delta[1] -= longitude;
+
+        if (Input.GetKey("up"))
+        {
+            latitude += delta[0];
+        }
+        if (Input.GetKey("down"))
+        {
+            latitude -= delta[0];
+        }
+        if (Input.GetKey("right"))
+        {
+            longitude += delta[1];
+        }
+        if (Input.GetKey("left"))
+        {
+            longitude -= delta[1];
+        }
+        //*/
+
 
         /*
         
