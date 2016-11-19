@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-namespace Assets.map
+namespace XYZMap
 {
     public class TileExtrusion
     {
@@ -24,7 +24,6 @@ namespace Assets.map
             List<int> tmpIndices = new List<int>();
             List<Vector3> tmpVertices = new List<Vector3>();
             
-
             float thickness = 0;
             for (int i = 0; i < data.Count; i++)
             {

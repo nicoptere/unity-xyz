@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.map
+namespace XYZMap
 {
 
     class TileVector : MapTile
@@ -41,8 +41,7 @@ namespace Assets.map
         {
 
             JSONObject obj = new JSONObject(www.text);
-
-            /*
+            
             JSONObject POIData = obj["pois"]["features"];
             for (int i = 0; i < POIData.Count; i++)
             {
@@ -53,7 +52,7 @@ namespace Assets.map
             
 
             JSONObject BlocksData = obj["buildings"]["features"];
-            blocks.Add(new TileExtrusion(this, BlocksData, map.parent.tiles, new Color(.1f, .1f, .1f)));
+            blocks.Add(new TileExtrusion(this, BlocksData, map.parent.tiles, new Color(.9f, .9f, .9f)));
             
             JSONObject EarthData = obj["earth"]["features"];
             flatTiles.Add(new TileFlat(this, EarthData, map.parent.tiles, new Color(.0f, .8f, .1f), 0, false));

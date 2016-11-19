@@ -1,9 +1,9 @@
-﻿using Assets.map;
+﻿using XYZMap;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.map
+namespace XYZMap
 {
     class TileLoader : MonoBehaviour
     {

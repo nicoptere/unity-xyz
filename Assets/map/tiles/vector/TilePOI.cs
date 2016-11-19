@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Assets.map
+namespace XYZMap
 {
     public class TilePOI
     {
@@ -44,6 +44,8 @@ namespace Assets.map
             if (active)
             {
                 var p = tile.map.latLonToPixels( lat, lng );
+                p[0] -= tile.map.tileSize / 2;
+                p[1] -= tile.map.tileSize / 2;
                 geom.transform.position = new Vector3(p[0], 2, -p[1]);
 
                 if (p[0] < -tile.map.width/2 || p[0] > tile.map.width/2) active = false;

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using Assets.map;
-using Assets.map;
+using XYZMap;
+using XYZMap;
 using System.Text.RegularExpressions;
 
 public class Map{
