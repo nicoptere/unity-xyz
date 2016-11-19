@@ -32,8 +32,7 @@ namespace Assets.map
                 return;
             }
 
-            loading++;
-            if(tile is TileImage && tile.gameObject == null ){
+            if( tile is TileImage && tile.gameObject == null ){
 
                 GameObject plane = createMesh();// GameObject.CreatePrimitive(PrimitiveType.Quad );
                 plane.transform.parent = parent.tiles.transform;
@@ -48,6 +47,8 @@ namespace Assets.map
         public IEnumerator loadData(MapTile tile)
         {
          //   Debug.Log("loading... " + tile.quadKey );
+            loading++;
+
             WWW www = new WWW(tile.url);
             yield return www;
             tile.onDataLoaded(www);
@@ -101,7 +102,7 @@ namespace Assets.map
             go.AddComponent(typeof(MeshFilter));
             go.GetComponent<MeshFilter>().mesh = mesh;
             go.AddComponent(typeof(MeshRenderer));
-            go.layer = LayerMask.NameToLayer( parent.layerName );
+            if( parent.renderToTexture )go.layer = LayerMask.NameToLayer( parent.layerName );
             return go;
 
         }

@@ -43,17 +43,18 @@ public class MapObject : MonoBehaviour {
 
             cam.cullingMask = (1 << LayerMask.NameToLayer("map"));
             cam.transform.parent = gameObject.transform;
-            cam.transform.position = new Vector3(0, 0, -0);
+            cam.transform.position = new Vector3(0, 0, -100);
 
             quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
             quad.name = "rttMesh";
             quad.transform.parent = gameObject.transform;
             quad.transform.Rotate(new Vector3(90, 0, 0));
             quad.transform.localScale = new Vector3(width, height, 1);
+
             Renderer renderer = quad.GetComponent<Renderer>();
             renderer.material.mainTexture = RT;
             renderer.material.shader = Shader.Find("Unlit/Texture");
-            renderer.enabled = false;
+            
 
         }
 
@@ -71,7 +72,7 @@ public class MapObject : MonoBehaviour {
 
     void Update()
     {
-        return;
+
         map.setView( latitude, longitude, zoom );
 
         if( renderToTexture)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Assets.map;
 using Assets.map.tiles;
 
-public class Map : MonoBehaviour{
+public class Map{
 
     public MapObject parent;
 
@@ -42,7 +42,6 @@ public class Map : MonoBehaviour{
         tileLoader.init( this, parent );
         tiles = new List<MapTile>();
         keys = new List<string>();
-        setSize(width, height);
 
 
     }
