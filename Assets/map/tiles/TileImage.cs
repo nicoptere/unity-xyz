@@ -7,7 +7,6 @@ namespace Assets.map.tiles
     {
         public TileImage(Map map, string quadKey)
         {
-            Debug.Log("new TileImage");
             this.map = map;
             this.quadKey = quadKey;
             initFromQuadKey(quadKey);
@@ -21,7 +20,7 @@ namespace Assets.map.tiles
             if( active)
             {
                 float[] p = map.latLonToPixels(lat, lng);
-                gameObject.transform.position = new Vector3(p[0], -p[1], 0);
+                gameObject.transform.position = new Vector3(p[0], 0, -p[1]);
             }
         }
 

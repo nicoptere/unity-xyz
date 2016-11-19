@@ -36,9 +36,14 @@ namespace Assets.map
 
                 GameObject plane = createMesh();// GameObject.CreatePrimitive(PrimitiveType.Quad );
                 plane.transform.parent = parent.tiles.transform;
-                plane.transform.localScale = new Vector3(map.tileSize, map.tileSize, 1);
+                plane.transform.localScale = new Vector3(map.tileSize, 1, map.tileSize);
                 tile.gameObject = plane;
 
+            }
+            if( tile is TileVector && tile.gameObject == null)
+            {
+                tile.gameObject = new GameObject();
+                tile.gameObject.transform.parent = parent.tiles.transform;
             }
             StartCoroutine(loadData(tile));
             
@@ -77,10 +82,10 @@ namespace Assets.map
             GameObject go = new GameObject();
 
             Vector3[] newVertices = new Vector3[] {
-                new Vector3( -0.5f, -0.5f, 0 ),
-                new Vector3(  0.5f, -0.5f, 0 ),
-                new Vector3(  0.5f,  0.5f, 0 ),
-                new Vector3( -0.5f,  0.5f, 0 ),
+                new Vector3( -0.5f, 0, -0.5f ),
+                new Vector3(  0.5f, 0, -0.5f ),
+                new Vector3(  0.5f, 0,  0.5f ),
+                new Vector3( -0.5f, 0,  0.5f ),
             };
 
             Vector2[] newUV = new Vector2[] {
@@ -102,6 +107,7 @@ namespace Assets.map
             go.AddComponent(typeof(MeshFilter));
             go.GetComponent<MeshFilter>().mesh = mesh;
             go.AddComponent(typeof(MeshRenderer));
+            go.SetActive(false); 
             if( parent.renderToTexture )go.layer = LayerMask.NameToLayer( parent.layerName );
             return go;
 

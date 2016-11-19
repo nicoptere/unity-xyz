@@ -14,8 +14,10 @@ public class MapObject : MonoBehaviour {
     public float longitude;
     public float zoom;
 
-    public string layerName = "map";
     public bool renderToTexture = false;
+    public string layerName = "map";
+
+    public bool vectorTiles = true;
 
     private Map map;
     private Camera cam;
@@ -27,6 +29,12 @@ public class MapObject : MonoBehaviour {
     void Awake()
     {
         Debug.Log(this);
+
+        //tiles container
+        tiles = new GameObject();
+        tiles.transform.parent = gameObject.transform;
+        tiles.name = "tiles";
+
         if (renderToTexture)
         {
 
@@ -42,12 +50,13 @@ public class MapObject : MonoBehaviour {
             cam.depth = -1;
 
             cam.cullingMask = (1 << LayerMask.NameToLayer("map"));
-            cam.transform.parent = gameObject.transform;
-            cam.transform.position = new Vector3(0, 0, -100);
+            cam.transform.parent = tiles.transform;
+            cam.transform.position = new Vector3(0, 100, 0);
+            cam.transform.LookAt(new Vector3());
 
             quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
             quad.name = "rttMesh";
-            quad.transform.parent = gameObject.transform;
+            quad.transform.parent = gameObject.transform.parent;
             quad.transform.Rotate(new Vector3(90, 0, 0));
             quad.transform.localScale = new Vector3(width, height, 1);
 
@@ -55,13 +64,7 @@ public class MapObject : MonoBehaviour {
             renderer.material.mainTexture = RT;
             renderer.material.shader = Shader.Find("Unlit/Texture");
             
-
         }
-
-        //tiles container
-        tiles = new GameObject();
-        tiles.name = "tiles";
-
         //map object
         map = new Map(this, provider, domains, width, height);
         

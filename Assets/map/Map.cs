@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using Assets.map;
 using Assets.map.tiles;
+using System.Text.RegularExpressions;
 
 public class Map{
 
     public MapObject parent;
-
     public Mercator mercator;
+
     public string provider;
     public string[] domains;
-
     public int tileSize, width, height;
     public float latitude, longitude, zoom;
 
@@ -22,30 +22,33 @@ public class Map{
     {
         this.parent = parent;
         tileSize = 256;
+        mercator = new Mercator(tileSize);
 
-        mercator = new Mercator(256);
         this.provider = provider != null ? provider : "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-        //this.provider = provider != null ? provider : "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
-        this.domains = domains != null ? domains : new string[] { "a", "b", "c" };
+        if( parent.vectorTiles )this.provider = "https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.json?api_key=mapzen-foW3wh2";
 
+        this.domains = domains != null ? domains : new string[] { "a", "b", "c" };
         this.width = width;
         this.height = height;
         
         //map center
         latitude = 0;
         longitude = 0;
+
         //map zoom level
         zoom = 0;
 
         //loading
-        tileLoader = new GameObject().AddComponent<TileLoader>();
+        GameObject go = new GameObject();
+        go.name = "tileLoader";
+        go.transform.parent = parent.transform;
+        tileLoader = go.AddComponent<TileLoader>();
         tileLoader.init( this, parent );
         tiles = new List<MapTile>();
         keys = new List<string>();
-
-
+        
     }
-    
+
     /**
      * sets the view rect size
      * @param w
@@ -117,7 +120,14 @@ public class Map{
 
                 if (!exist){
 
-                    MapTile tile = new TileImage(this, key);
+                    MapTile tile;
+                    if (parent.vectorTiles)
+                    {
+                        tile = new TileVector(this, key);
+                    }else
+                    {
+                        tile = new TileImage(this, key);
+                    }
 
                     tileLoader.addTile(tile);
                     tiles.Add(tile);
@@ -141,7 +151,7 @@ public class Map{
         return mercator.resolution(zoom);
     }
     
-
+    //utils
 
     public float[] viewRectToLatLng(float lat, float lng, float zoom)
     {

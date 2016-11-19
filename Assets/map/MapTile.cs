@@ -96,7 +96,8 @@ public class MapTile{
     }
 
     public virtual void Update(bool active)
-    {/*
+    {
+        /*
         gameObject.SetActive(active);
         if( active)
         {

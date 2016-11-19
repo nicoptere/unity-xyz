@@ -16,10 +16,12 @@ namespace Assets.map.tiles
         {
             this.map = map;
             this.quadKey = quadKey;
+            initFromQuadKey(quadKey);
         }
 
         public override void Update( bool active )
         {
+            if (!loaded) return;
 
             foreach (POI poi in pois)
             {
@@ -50,9 +52,10 @@ namespace Assets.map.tiles
             JSONObject POIData = obj["pois"]["features"];
             for (int i = 0; i < POIData.Count; i++)
             {
-                //pois.Add( new POI( this, POIData[i], parent ) );
+                Debug.Log(POIData[i]);
+                pois.Add( new POI( this, POIData[i] ) );
             }
-
+            return;
             //JSONObject BuildingData = obj["building"]["features"];
             //Debug.Log(BuildingData);
 

@@ -74,7 +74,7 @@ public class CameraControls : MonoBehaviour
         // If middle mouse and left alt are selected? ORBIT
         else if (Input.GetMouseButton(0) )// && Input.GetKey(KeyCode.LeftAlt))
         {
-            xDeg -= Input.GetAxis("Mouse X") * xSpeed * 0.02f;
+            xDeg += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
             yDeg -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
 
             ////////OrbitAngle
