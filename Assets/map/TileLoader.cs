@@ -1,4 +1,4 @@
-﻿using Assets.map.tiles;
+﻿using Assets.map;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -107,8 +107,9 @@ namespace Assets.map
             go.AddComponent(typeof(MeshFilter));
             go.GetComponent<MeshFilter>().mesh = mesh;
             go.AddComponent(typeof(MeshRenderer));
-            go.SetActive(false); 
-            if( parent.renderToTexture )go.layer = LayerMask.NameToLayer( parent.layerName );
+            go.SetActive(false);
+            go.hideFlags = HideFlags.HideInHierarchy;
+            if ( parent.renderToTexture )go.layer = LayerMask.NameToLayer( parent.layerName );
             return go;
 
         }

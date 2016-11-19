@@ -1,7 +1,8 @@
 ﻿
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-namespace Assets.map.tiles
+namespace Assets.map
 {
     public class TileExtrusion
     {
@@ -55,8 +56,7 @@ namespace Assets.map.tiles
                     {
 
                         JSONObject poly = bunch[k];
-
-                        int count = poly.Count - 1;
+                        int count = poly.Count;
 
                         List<Vector2> vertices2D = new List<Vector2>();
                         for (int j = 0; j < count; j++)
@@ -65,26 +65,11 @@ namespace Assets.map.tiles
                             vertices2D.Add(new Vector2(pos[0], -pos[1]));
                         }
 
+                        vertices2D = vertices2D.Distinct().ToList<Vector2>();
+                        count = vertices2D.Count;
 
-                        /*
-                        Vertices polygon = new Vertices(vertices2D);
-                        if ( !polygon.IsCounterClockWise())
-                        {
-                            polygon.Reverse();
-                        }
-                        //*/
-                        
                         Triangulator tr = new Triangulator(vertices2D);
                         int[] ids = tr.Triangulate();
-
-                        
-                        if (ids.Length == 0) continue;
-                        if( ids.Length < vertices2D.Count - 2)
-                        {
-                            Debug.Log("fuck");
-                        }
-                        //*/
-                        //int[] ids = new int[0];
                         int offset = tmpVertices.Count;
                         int[] inds = processIndices(ids, count, offset);
                         for (int j = 0; j < inds.Length; j++)
@@ -96,104 +81,33 @@ namespace Assets.map.tiles
                         {
                             float x = vertices2D[j % count].x - tile.map.tileSize / 2;
                             float y = vertices2D[j % count].y + tile.map.tileSize / 2;
-
-                            float d = Mathf.Max(1 - Mathf.Sqrt(-x * -x + -y * -y) / (tile.map.width / 2), 0);
-                            d = Mathf.Pow(d, 16) * (3 - 2 * d);
-                            thickness = Mathf.Max(thickness, d);// doubleExponentialSeat( d * .5f, .25f ) );
-
-                            Vector3 v = new Vector3(x, (j < count) ? 0 : h, y);
+                            Vector3 v = new Vector3(x, (j >= count) ? h : 0, y);
                             tmpVertices.Add(v);
-
                         }
                     }
                 }
             }
             
-            Vector3[] vertices = new Vector3[ tmpVertices.Count ];
-            for (int i = 0; i < tmpVertices.Count; i++)
-            {
-                vertices[i] = tmpVertices[i];
-            }
-            int[] indices = new int[ tmpIndices.Count ];
-            for(int i = 0; i < tmpIndices.Count; i++ )
-            {
-                indices[i] = tmpIndices[i];
-            }
-
             // Create the mesh
             Mesh msh = new Mesh();
-            msh.vertices = vertices;
-            msh.triangles = indices;
+            msh.vertices = tmpVertices.ToArray();
+            msh.triangles = tmpIndices.ToArray();
             msh.RecalculateNormals();
             msh.RecalculateBounds();
             
             geom = new GameObject();
             geom.transform.parent = parent.transform;
             geom.AddComponent(typeof(MeshRenderer));
-            
+            geom.hideFlags = HideFlags.HideInHierarchy;
+
             MeshFilter filter = geom.AddComponent(typeof(MeshFilter)) as MeshFilter;
             filter.mesh = msh;
 
             Renderer renderer = geom.GetComponent<Renderer>();
-            //renderer.material = new Material(Shader.Find("Toon/Lit Outline"));// Shader.Find("Unlit/Color"));// 
-            renderer.material.color = color;// new Color(0.1f, 0.1f, 0.1f);
-            //renderer.material.SetFloat("_Outline", .001f);
-
-            //renderer.material = new Material( Shader.Find("Unlit/Color"));
+            renderer.material.color = color;
             renderer.material.SetFloat("_Metallic", .5f);
             renderer.material.SetFloat("_Glossiness", .8f);
-
-            /*
-            Color c = new Color(1,.65f,0);
-            Color c1 = Color.yellow;
-            LineRenderer lineRenderer = geom.AddComponent<LineRenderer>();
-            lineRenderer.material = new Material( Shader.Find("Particles/Additive"));//Shader.Find("Unlit/Color"));// 
-            //lineRenderer.material.color = c;
             
-            lineRenderer.SetColors(c1, c);
-            lineRenderer.SetWidth( 1 + thickness * 4, 1 + thickness * 4 );
-            lineRenderer.SetVertexCount(vertices.Length);
-            lineRenderer.SetPositions(vertices);
-            //*/
-        }
-        float doubleExponentialSeat(float x, float a)
-        {
-
-            float epsilon = 0.00001f;
-            float min_param_a = 0.0f + epsilon;
-            float max_param_a = 1.0f - epsilon;
-            a = Mathf.Min(max_param_a, Mathf.Max(min_param_a, a));
-
-            float y = 0;
-            if (x <= 0.5)
-            {
-                y = (Mathf.Pow(2.0f * x, 1f - a)) / 2.0f;
-            }
-            else
-            {
-                y = 1.0f - (Mathf.Pow(2.0f * (1.0f - x), 1 - a)) / 2.0f;
-            }
-            return y;
-        }
-
-        float doubleExponentialSigmoid(float x, float a)
-        {
-            float epsilon = 0.00001f;
-            float min_param_a = 0 + epsilon;
-            float max_param_a = 1 - epsilon;
-            a = Mathf.Min(max_param_a, Mathf.Max(min_param_a, a));
-            a = 1 - a; // for sensible results
-
-            float y = 0;
-            if (x <= 0.5)
-            {
-                y = (Mathf.Pow( 2 * x, 1 / a ) ) / 2;
-            }
-            else
-            {
-                y = 1 - (Mathf.Pow(2 * (1 - x ), 1 / a ) ) / 2;
-            }
-            return y;
         }
 
         private int[] processIndices(int[] capIndices, int verticesCount, int offset)
@@ -233,7 +147,7 @@ namespace Assets.map.tiles
             inc = 0;
             for( int i=0; i < capIndices.Length; i++)
             {
-                indices[inc++] = capIndices[i] + verticesCount + offset;
+                indices[inc++] = capIndices[capIndices.Length - 1 - i] + verticesCount + offset;
             }
             for (int i = 0; i < sideIndices.Length; i++)
             {

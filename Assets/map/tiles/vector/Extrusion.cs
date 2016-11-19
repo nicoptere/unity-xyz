@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.map.tiles
+namespace Assets.map
 {
     public class Extrusion
     {
@@ -80,7 +80,8 @@ namespace Assets.map.tiles
             geom = new GameObject();
             geom.transform.parent = parent.transform;
             geom.AddComponent(typeof(MeshRenderer));
-            
+            geom.hideFlags = HideFlags.HideInHierarchy;
+
             MeshFilter filter = geom.AddComponent(typeof(MeshFilter)) as MeshFilter;
             filter.mesh = msh;
             Renderer renderer = geom.GetComponent<Renderer>();

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.map.tiles
+namespace Assets.map
 {
     class TileImage : MapTile
     {

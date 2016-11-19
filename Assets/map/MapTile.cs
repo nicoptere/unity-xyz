@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Assets.map.tiles;
+using Assets.map;
 
 public class MapTile{
 

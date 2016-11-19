@@ -14,17 +14,16 @@ public class MapObject : MonoBehaviour {
     public float longitude;
     public float zoom;
 
+    public GameObject tiles;
     public bool renderToTexture = false;
+    public GameObject rttMesh;
     public string layerName = "map";
 
     public bool vectorTiles = true;
-
+    
     private Map map;
     private Camera cam;
     private RenderTexture RT;
-
-    public GameObject tiles;
-    public GameObject quad;
     
     void Awake()
     {
@@ -54,13 +53,13 @@ public class MapObject : MonoBehaviour {
             cam.transform.position = new Vector3(0, 100, 0);
             cam.transform.LookAt(new Vector3());
 
-            quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            quad.name = "rttMesh";
-            quad.transform.parent = gameObject.transform.parent;
-            quad.transform.Rotate(new Vector3(90, 0, 0));
-            quad.transform.localScale = new Vector3(width, height, 1);
+            rttMesh = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            rttMesh.name = "rttMesh";
+            rttMesh.transform.parent = gameObject.transform.parent;
+            rttMesh.transform.Rotate(new Vector3(90, 0, 0));
+            rttMesh.transform.localScale = new Vector3(width, height, 1);
 
-            Renderer renderer = quad.GetComponent<Renderer>();
+            Renderer renderer = rttMesh.GetComponent<Renderer>();
             renderer.material.mainTexture = RT;
             renderer.material.shader = Shader.Find("Unlit/Texture");
             
@@ -143,14 +142,12 @@ public class MapObject : MonoBehaviour {
     private void resize(int width, int height)
     {
         if (map != null) map.setSize(width, height);
-        if (quad != null)
+        if (rttMesh != null)
         {
-            quad.transform.localScale = new Vector3(width, height, 1);
+            rttMesh.transform.localScale = new Vector3(width, height, 1);
             RT.width = width;
             RT.height = height;
             cam.orthographicSize = Mathf.Max(width, height);
         }
-
     }
-
 }

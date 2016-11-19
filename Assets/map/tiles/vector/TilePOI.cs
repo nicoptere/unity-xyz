@@ -4,32 +4,29 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Assets.map.tiles
+namespace Assets.map
 {
-    public class POI
+    public class TilePOI
     {
         MapTile tile;
-        JSONObject data;
-        GameObject parent;
         GameObject geom;
-
         float lat, lng;
 
-        public POI( MapTile tile, JSONObject data ){
+        private Color inside = new Color(1, 1, .75f);
+        private Color outside = new Color(0,0,0);
+
+        public TilePOI( MapTile tile, JSONObject data ){
 
             this.tile = tile;
-            this.data = data;
-            this.parent = tile.gameObject;
-            //Debug.Log(obj["pois"]["features"][i]["geometry"]["coordinates"][0].n);
-
             lat = data["geometry"]["coordinates"][1].n;
             lng = data["geometry"]["coordinates"][0].n;
             
             float upScale = 2 + Random.value * 5;
-            Vector3 scale = new Vector3(1 / parent.transform.localScale.x * upScale, upScale, 1 / parent.transform.localScale.y * upScale);
+            Vector3 scale = new Vector3(1 / tile.gameObject.transform.localScale.x * upScale, upScale, 1 / tile.gameObject.transform.localScale.y * upScale);
             geom = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            geom.transform.parent = parent.transform;
+            geom.transform.parent = tile.gameObject.transform;
             geom.transform.localScale = scale;
+            geom.hideFlags = HideFlags.HideInHierarchy;
 
             Renderer renderer = geom.GetComponent<Renderer>();
             renderer.material.color = new Color( 0, 0, 0 );
@@ -54,9 +51,8 @@ namespace Assets.map.tiles
 
             }
             Renderer renderer = geom.GetComponent<Renderer>();
-            renderer.material.color = active == true ? new Color(1, 1, .75f) : new Color(0, 0, 0);
-            renderer.material.SetColor( "_EmissionColor", active == true ? new Color(1, 1, .75f) : new Color(0, 0, 0) );
-            //*/
+            renderer.material.color = active == true ? inside : outside;
+            renderer.material.SetColor( "_EmissionColor", active == true ? inside : outside);
 
         }
 

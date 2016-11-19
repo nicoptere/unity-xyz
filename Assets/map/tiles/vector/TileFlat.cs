@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-namespace Assets.map.tiles
+namespace Assets.map
 {
-    public class FlatTile
+    public class TileFlat
     {
         MapTile tile;
         JSONObject data;
@@ -14,7 +14,7 @@ namespace Assets.map.tiles
         static private List<int> built = new List<int>();
 
         float lat, lng;
-        public FlatTile(MapTile tile, JSONObject data, GameObject parent, Color color, float height = 1, bool checkId = true)
+        public TileFlat(MapTile tile, JSONObject data, GameObject parent, Color color, float height = 1, bool checkId = true)
         {
 
             this.tile = tile;
@@ -32,7 +32,7 @@ namespace Assets.map.tiles
             for (int i = 0; i < data.Count; i++)
             {
                 int id = (int)data[i]["properties"]["id"].n;
-                if (built.IndexOf(id) != -1) continue;
+                if (checkId && built.IndexOf(id) != -1) continue;
                 built.Add(id);
 
                 if (data[i]["properties"]["height"] != null)
@@ -62,16 +62,14 @@ namespace Assets.map.tiles
                             vertices2D.Add(v);
                         }
                         vertices2D.Reverse();
-
                         Triangulator tr = new Triangulator(vertices2D.Distinct().ToList<Vector2>());
                         int[] ids = tr.Triangulate();
-
+                        
                         //int[] ids = triangulate(vertices2D.Distinct().ToList<Vector2>());
 
                         if (ids.Length == 0)
                         {
                             Debug.Log("fuck 0");
-                            break;
                         }
                         if (ids.Length < vertices2D.Count - 2)
                         {
@@ -102,6 +100,7 @@ namespace Assets.map.tiles
             {
                 indices[i] = tmp[i];
             }
+
             tmp.Reverse();
             for (int i = 0; i < tmp.Length; i++)
             {
@@ -118,7 +117,8 @@ namespace Assets.map.tiles
 
             geom = new GameObject();
             geom.transform.parent = parent.transform;
-            
+            geom.hideFlags = HideFlags.HideInHierarchy;
+
             float[] p = tile.map.latLonToPixels(lat, lng);
             geom.transform.position = new Vector3(p[0], 2, -p[1]);
 
@@ -156,7 +156,7 @@ namespace Assets.map.tiles
 
             }
             // Add the contour with a specific orientation, use "Original" if you want to keep the input orientation.
-            tess.AddContour(contour, LibTessDotNet.ContourOrientation.CounterClockwise );
+            tess.AddContour(contour, LibTessDotNet.ContourOrientation.Original );
 
             // Tessellate!
             // The winding rule determines how the different contours are combined together.
