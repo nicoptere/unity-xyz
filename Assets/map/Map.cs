@@ -114,7 +114,7 @@ public class Map{
 
                 if (!exist){
                     MapTile tile = new MapTile(this, key);
-                    parent.addTile(tile);
+                    //parent.addTile(tile);
                     tiles.Add(tile);
                     keys.Add(key);
                 }

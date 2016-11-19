@@ -24,7 +24,7 @@ public class MapTile{
 
     private List<POI> pois = new List<POI>();
     private List<TileExtrusion> blocks = new List<TileExtrusion>();
-    private List<TileExtrusion> waters = new List<TileExtrusion>();
+    private List<FlatTile> flatTiles = new List<FlatTile>();
     private List<Extrusion> buildings = new List<Extrusion>();
     private List<Lines> lines = new List<Lines>();
 
@@ -60,7 +60,12 @@ public class MapTile{
         url = getMapUrl(tx, ty, zoom);
 
     }
-    
+
+    public string getMapUrl(int x, int y)
+    {
+        return getMapUrl(map.provider, map.domains, x, y, map.zoom);
+    }
+
     public string getMapUrl( int x, int y, float z)
     {
         return getMapUrl(map.provider, map.domains, x, y, z);
@@ -102,8 +107,7 @@ public class MapTile{
         renderer.material.mainTexture = texture;
         loaded = true;
     }
-
-
+    
     public void Update(bool active)
     {
         plane.SetActive(active);
@@ -120,6 +124,10 @@ public class MapTile{
         foreach (Extrusion building in buildings)
         {
             building.Update(active);
+        }
+        foreach (FlatTile flat in flatTiles)
+        {
+            flat.Update(active);
         }
     }
 
@@ -149,8 +157,6 @@ public class MapTile{
             if( BuildingData[i]["geometry"]["type"].str == "Polygon")
             {
                 float h = 3;
-
-
                 if (BuildingData[i]["properties"]["height"] != null)
                 {
                     h = BuildingData[i]["properties"]["height"].n;
@@ -161,7 +167,7 @@ public class MapTile{
                     h = BuildingData[i]["properties"]["min_height"].n;
                     //Debug.Log("min_height" + h);
                 }
-                buildings.Add(new Extrusion(this, BuildingData[i]["geometry"], parent, h ));
+                //buildings.Add(new Extrusion(this, BuildingData[i]["geometry"], parent, h ));
                 //lines.Add(new Lines(this, BuildingData[i]["geometry"], parent));
             }
         }
@@ -169,13 +175,15 @@ public class MapTile{
 
 
         JSONObject BlocksData = obj["buildings"]["features"];
-        blocks.Add(new TileExtrusion(this, BlocksData, parent, new Color( .1f,.1f,.1f ) ));
-        
-        JSONObject WaterData = obj["water"]["features"];
-        waters.Add(new TileExtrusion(this, WaterData, parent, new Color(.1f, .6f, .95f), false));
+        blocks.Add(new TileExtrusion(this, BlocksData, parent, new Color( .8f,.8f,.8f ) ));
+        //flatTiles.Add(new FlatTile(this, BlocksData, parent, new Color( .8f,.8f,.8f ), 10, false ));
         
         JSONObject EarthData = obj["earth"]["features"];
-        waters.Add(new TileExtrusion(this, EarthData, parent, new Color(.0f, .8f, .1f), false));
+        flatTiles.Add(new FlatTile(this, EarthData, parent, new Color(.0f, .8f, .1f), 0, false));
+
+        JSONObject WaterData = obj["water"]["features"];
+        flatTiles.Add(new FlatTile(this, WaterData, parent, new Color(.1f, .6f, .95f), -1, false));
+        
 
 
         /*

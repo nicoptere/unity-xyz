@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using UnityEngine;
-
 namespace Assets.map.extra
 {
     public class TileExtrusion
@@ -66,16 +66,25 @@ namespace Assets.map.extra
                         }
 
 
+                        /*
+                        Vertices polygon = new Vertices(vertices2D);
+                        if ( !polygon.IsCounterClockWise())
+                        {
+                            polygon.Reverse();
+                        }
+                        //*/
+                        
                         Triangulator tr = new Triangulator(vertices2D);
                         int[] ids = tr.Triangulate();
-                        
 
+                        
                         if (ids.Length == 0) continue;
                         if( ids.Length < vertices2D.Count - 2)
                         {
                             Debug.Log("fuck");
                         }
-
+                        //*/
+                        //int[] ids = new int[0];
                         int offset = tmpVertices.Count;
                         int[] inds = processIndices(ids, count, offset);
                         for (int j = 0; j < inds.Length; j++)
@@ -104,13 +113,11 @@ namespace Assets.map.extra
             for (int i = 0; i < tmpVertices.Count; i++)
             {
                 vertices[i] = tmpVertices[i];
-                //if( i   < 10 ) Debug.Log(vertices[i]);
             }
             int[] indices = new int[ tmpIndices.Count ];
             for(int i = 0; i < tmpIndices.Count; i++ )
             {
                 indices[i] = tmpIndices[i];
-                //if (i < 10) Debug.Log(indices[i]);
             }
 
             // Create the mesh
@@ -222,7 +229,7 @@ namespace Assets.map.extra
             }
 
             //merging faces indices
-            int[] indices = new int[ capIndices.Length + sideIndices.Length ];
+            int[] indices = new int[capIndices.Length + sideIndices.Length ];
             inc = 0;
             for( int i=0; i < capIndices.Length; i++)
             {

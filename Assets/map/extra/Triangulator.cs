@@ -69,7 +69,7 @@ public class Triangulator
             }
         }
 
-        indices.Reverse();
+        //indices.Reverse();
         return indices.ToArray();
     }
 
