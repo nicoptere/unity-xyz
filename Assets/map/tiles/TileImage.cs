@@ -15,12 +15,14 @@ namespace XYZMap
         public override void Update(bool active)
         {
             if (!loaded) return;
+            Vector3 pos = map.parent.gameObject.transform.position;
+            pos.y = map.parent.orthographicCamera.transform.position.y;
 
             gameObject.SetActive(active);
             if( active)
             {
                 float[] p = map.latLonToPixels(lat, lng);
-                gameObject.transform.position = new Vector3(p[0], 0, -p[1]);
+                gameObject.transform.position = new Vector3(p[0], -1, -p[1]) + pos;
             }
         }
 

@@ -26,59 +26,32 @@ namespace XYZMap
             
             lat = tile.lat;
             lng = tile.lng;
-            float[] pp = tile.map.latLonToPixels(lat, lng);
-            //Debug.Log(pp[0] + " " + pp[1]);
-            float h = height;
+            float[] tileCenter = tile.map.latLonToPixels(lat, lng);
+            
             for (int i = 0; i < data.Count; i++)
             {
                 int id = (int)data[i]["properties"]["id"].n;
                 if (checkId && built.IndexOf(id) != -1) continue;
                 built.Add(id);
-
-                if (data[i]["properties"]["height"] != null)
-                {
-                    h = data[i]["properties"]["height"].n;
-                    h *= 1 / tile.map.resolution(tile.map.zoom);
-                }
-                if (data[i]["properties"]["min_height"] != null)
-                {
-                    h = data[i]["properties"]["min_height"].n;
-                    h *= 1 / tile.map.resolution(tile.map.zoom);
-                }
-
+                
                 if (data[i]["geometry"]["type"].str == "Polygon")
                 {
-                    processPolygon( pp, h, data[i]["geometry"]["coordinates"], ref tmpIndices, ref tmpVertices);
+                    processPolygon( tileCenter, data[i]["geometry"]["coordinates"], ref tmpIndices, ref tmpVertices);
                 }
                 else if( data[i]["geometry"]["type"].str == "MultiPolygon")
                 {
                     for( int j =0; j < data[i]["geometry"]["coordinates"].Count; j++)
                     {
                         JSONObject poly = data[i]["geometry"]["coordinates"][j];
-                        processPolygon( pp, h, poly, ref tmpIndices, ref tmpVertices);
+                        processPolygon( tileCenter, poly, ref tmpIndices, ref tmpVertices);
                     }
                 }
             }
             
-            //tmpIndices.Reverse();
-            int[] tmp = tmpIndices.ToArray();
-
-            //hard coded double side
-            int[] indices = new int[tmp.Length * 2];
-            for (int i = 0; i < tmp.Length; i++)
-            {
-                indices[i] = tmp[i];
-            }
-            tmp.Reverse();
-            for (int i = 0; i < tmp.Length; i++)
-            {
-                indices[i] = tmp[i];
-            }
-
             // Create the mesh
             Mesh msh = new Mesh();
             msh.vertices = tmpVertices.ToArray();
-            msh.triangles = indices;
+            msh.triangles = tmpIndices.ToArray();
             
             msh.RecalculateNormals();
             msh.RecalculateBounds();
@@ -88,7 +61,7 @@ namespace XYZMap
             geom.hideFlags = HideFlags.HideInHierarchy;
 
             float[] p = tile.map.latLonToPixels(lat, lng);
-            geom.transform.position = new Vector3(p[0], 2, -p[1]);
+            geom.transform.position = new Vector3(p[0], height, -p[1]);
 
             geom.AddComponent(typeof(MeshRenderer));
 
@@ -106,7 +79,7 @@ namespace XYZMap
             
         }
         
-        public void processPolygon( float[] center, float h, JSONObject polygon, ref List<int> tmpIndices, ref List<Vector3> tmpVertices )
+        public void processPolygon( float[] center, JSONObject polygon, ref List<int> tmpIndices, ref List<Vector3> tmpVertices )
         {
 
             for (int k = 0; k < polygon.Count; k++)
@@ -140,7 +113,7 @@ namespace XYZMap
                 for (int j = 0; j < count; j++)
                 {
                     float[] pos = tile.map.latLonToPixels(vertices2D[j].x, vertices2D[j].y);
-                    Vector3 v = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, h, -pos[1] + center[1] + tile.map.tileSize / 2);
+                    Vector3 v = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 0, -pos[1] + center[1] + tile.map.tileSize / 2);
                     tmpVertices.Add(v);
                 }
             }

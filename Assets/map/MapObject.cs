@@ -23,7 +23,7 @@ public class MapObject : MonoBehaviour {
     public string vectorTileUrl = "https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.json?api_key=mapzen-foW3wh2";
 
     private Map map;
-    private Camera cam;
+    public Camera orthographicCamera;
     private RenderTexture RT;
     
     void Awake()
@@ -41,19 +41,19 @@ public class MapObject : MonoBehaviour {
             RT = new RenderTexture(width, height, 24, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
             RT.name = "camRtt";
 
-            cam = gameObject.AddComponent<Camera>() as Camera;
-            cam.orthographic = true;
-            cam.orthographicSize = Mathf.Max(width, height) / 2;
-            cam.targetTexture = RT;
-            cam.nearClipPlane = 1f;
-            cam.farClipPlane = 1000;
-            cam.depth = -1;
+            orthographicCamera = gameObject.AddComponent<Camera>() as Camera;
+            orthographicCamera.orthographic = true;
+            orthographicCamera.orthographicSize = Mathf.Max(width, height) / 2;
+            orthographicCamera.targetTexture = RT;
+            orthographicCamera.nearClipPlane = 0;
+            orthographicCamera.farClipPlane = 2;
+            orthographicCamera.depth = -1;
 
-            cam.cullingMask = (1 << LayerMask.NameToLayer("map"));
-            cam.transform.parent = tiles.transform;
-            cam.transform.position = new Vector3(0, 100, 0);
-            cam.transform.LookAt(new Vector3());
-
+            orthographicCamera.cullingMask = (1 << LayerMask.NameToLayer("map"));
+            orthographicCamera.transform.parent = tiles.transform;
+            orthographicCamera.transform.position = new Vector3(0, 1, 0);
+            orthographicCamera.transform.LookAt(new Vector3());
+            
             rttMesh = GameObject.CreatePrimitive(PrimitiveType.Quad);
             rttMesh.name = "rttMesh";
             rttMesh.transform.parent = gameObject.transform.parent;
@@ -69,7 +69,6 @@ public class MapObject : MonoBehaviour {
 
         if( vectorTiles)
         {
-
             if (vectorTileUrl == "")
             {
                 vectorTiles = false;
@@ -95,10 +94,9 @@ public class MapObject : MonoBehaviour {
         if( renderToTexture)
         {
             RenderTexture currentRT = RenderTexture.active;
-            RenderTexture.active = cam.targetTexture;
-            cam.Render();
+            RenderTexture.active = orthographicCamera.targetTexture;
+            orthographicCamera.Render();
             RenderTexture.active = currentRT;
-
         }
 
         /*
@@ -186,7 +184,7 @@ public class MapObject : MonoBehaviour {
             rttMesh.transform.localScale = new Vector3(width, height, 1);
             RT.width = width;
             RT.height = height;
-            cam.orthographicSize = Mathf.Max(width, height);
+            orthographicCamera.orthographicSize = Mathf.Max(width, height);
         }
     }
 }
