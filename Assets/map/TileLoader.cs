@@ -32,26 +32,32 @@ namespace XYZMap
                 return;
             }
 
-            if( tile is TileImage && tile.gameObject == null ){
-
-                GameObject plane = createMesh();// GameObject.CreatePrimitive(PrimitiveType.Quad );
-                plane.transform.parent = parent.tiles.transform;
-                plane.transform.localScale = new Vector3(map.tileSize, 1, map.tileSize);
-                tile.gameObject = plane;
+            if( tile is TileImage  ){
+                if( tile.gameObject == null)
+                {
+                    GameObject plane = createMesh();// GameObject.CreatePrimitive(PrimitiveType.Quad );
+                    plane.transform.parent = parent.tiles.transform;
+                    plane.transform.localScale = new Vector3(map.tileSize, 1, map.tileSize);
+                    tile.gameObject = plane;
+                }
+                StartCoroutine(loadImage(tile));
 
             }
-            if( tile is TileVector && tile.gameObject == null)
+            if( tile is TileVector )
             {
-                tile.gameObject = new GameObject();
-                tile.gameObject.transform.parent = parent.tiles.transform;
+                if( tile.gameObject == null)
+                {
+                    tile.gameObject = new GameObject();
+                    tile.gameObject.transform.parent = parent.tiles.transform;
+                }
+                StartCoroutine(loadData(tile));
             }
-            StartCoroutine(loadData(tile));
             
         }
 
-        public IEnumerator loadData(MapTile tile)
+        public IEnumerator loadImage(MapTile tile)
         {
-         //   Debug.Log("loading... " + tile.quadKey );
+            //Debug.Log("loading: " + tile.url);
             loading++;
 
             WWW www = new WWW(tile.url);
@@ -59,14 +65,36 @@ namespace XYZMap
             tile.onDataLoaded(www);
 
             loading--;
+            if (queue.Count > 0)
+            {
+                MapTile next = queue[0];
+                addTile(next);
+                queue.RemoveAt(0);
+            }
+        }
 
+        //https://tile.mapzen.com/mapzen/vector/v1/all/15/9644/12318.json?api_key=mapzen-foW3wh2
+        //https://tile.mapzen.com/mapzen/vector/v1/all/15/9648/12322.json?api_key=mapzen-foW3wh2
+        public IEnumerator loadData(MapTile tile)
+        {
+            Debug.Log("loading: " + tile.url );
+            loading++;
+
+            WWW www = new WWW(tile.url);
+            yield return www;
+
+            tile.onDataLoaded(www);
+
+
+
+            loading--;
             if( queue.Count > 0)
             {
                 MapTile next = queue[0];
                 addTile(next);
                 queue.RemoveAt(0);
             }
-
+            
            // Debug.Log("loaded");
             /*
             string provider = "https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.json?api_key=mapzen-foW3wh2";

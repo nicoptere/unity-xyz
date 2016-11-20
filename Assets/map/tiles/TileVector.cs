@@ -41,7 +41,7 @@ namespace XYZMap
         {
 
             JSONObject obj = new JSONObject(www.text);
-            
+            /*
             JSONObject POIData = obj["pois"]["features"];
             for (int i = 0; i < POIData.Count; i++)
             {
@@ -49,17 +49,21 @@ namespace XYZMap
                 pois.Add( new TilePOI( this, POIData[i] ) );
             }
             //*/
-            
 
-            JSONObject BlocksData = obj["buildings"]["features"];
-            blocks.Add(new TileExtrusion(this, BlocksData, map.parent.tiles, new Color(.9f, .9f, .9f)));
-            
-            JSONObject EarthData = obj["earth"]["features"];
-            flatTiles.Add(new TileFlat(this, EarthData, map.parent.tiles, new Color(.0f, .8f, .1f), 0, false));
+
+            JSONObject EarthData = obj["landuse"]["features"];
+            flatTiles.Add(new TileFlat(this, EarthData, map.parent.tiles, new Color( 1, .6f, .0f), 10, false));
+
+            EarthData = obj["earth"]["features"];
+            flatTiles.Add(new TileFlat(this, EarthData, map.parent.tiles, new Color(.0f, .8f, .3f), 5, false));
 
             JSONObject WaterData = obj["water"]["features"];
             flatTiles.Add(new TileFlat(this, WaterData, map.parent.tiles, new Color(.1f, .6f, .95f), 0, false));
             
+            JSONObject BlocksData = obj["buildings"]["features"];
+            blocks.Add(new TileExtrusion(this, BlocksData, map.parent.tiles, new Color(.9f, .9f, .9f)));
+            
+            //*/
         }
         
     }

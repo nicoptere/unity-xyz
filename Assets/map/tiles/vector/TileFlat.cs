@@ -48,45 +48,14 @@ namespace XYZMap
 
                 if (data[i]["geometry"]["type"].str == "Polygon")
                 {
-                    JSONObject bunch = data[i]["geometry"]["coordinates"];
-                    for (int k = 0; k < bunch.Count; k++)
+                    processPolygon( pp, h, data[i]["geometry"]["coordinates"], ref tmpIndices, ref tmpVertices);
+                }
+                else if( data[i]["geometry"]["type"].str == "MultiPolygon")
+                {
+                    for( int j =0; j < data[i]["geometry"]["coordinates"].Count; j++)
                     {
-                        JSONObject poly = bunch[k];
-                        int count = poly.Count;
-
-                        List<Vector2> vertices2D = new List<Vector2>();
-                        for (int j = 0; j < count; j++)
-                        {
-                            float[] pos = tile.map.latLonToPixels(poly[j][1].n, poly[j][0].n );
-                            Vector2 v = new Vector2(poly[j][1].n, poly[j][0].n);
-                            vertices2D.Add(v);
-                        }
-                        vertices2D.Reverse();
-                        Triangulator tr = new Triangulator(vertices2D.Distinct().ToList<Vector2>());
-                        int[] ids = tr.Triangulate();
-                        
-                        //int[] ids = triangulate(vertices2D.Distinct().ToList<Vector2>());
-
-                        if (ids.Length == 0)
-                        {
-                            Debug.Log("fuck 0");
-                        }
-                        if (ids.Length < vertices2D.Count - 2)
-                        {
-                            Debug.Log("fuck < n-2");
-
-                        }
-                        
-                        for (int j = 0; j < ids.Length; j++)
-                        {
-                            tmpIndices.Add( tmpVertices.Count + ids[j] );
-                        }
-                        for (int j = 0; j < count; j++)
-                        {
-                            float[] pos = tile.map.latLonToPixels(vertices2D[j].x, vertices2D[j].y );
-                            Vector3 v = new Vector3(pos[0] - pp[0] - tile.map.tileSize / 2, h, -pos[1] + pp[1]+ tile.map.tileSize / 2);
-                            tmpVertices.Add(v);
-                        }
+                        JSONObject poly = data[i]["geometry"]["coordinates"][j];
+                        processPolygon( pp, h, poly, ref tmpIndices, ref tmpVertices);
                     }
                 }
             }
@@ -137,6 +106,46 @@ namespace XYZMap
             
         }
         
+        public void processPolygon( float[] center, float h, JSONObject polygon, ref List<int> tmpIndices, ref List<Vector3> tmpVertices )
+        {
+
+            for (int k = 0; k < polygon.Count; k++)
+            {
+                JSONObject poly = polygon[k];
+                int count = poly.Count;
+
+                List<Vector2> vertices2D = new List<Vector2>();
+                for (int j = 0; j < count; j++)
+                {
+                    float[] pos = tile.map.latLonToPixels(poly[j][1].n, poly[j][0].n);
+                    Vector2 v = new Vector2(poly[j][1].n, poly[j][0].n);
+                    vertices2D.Add(v);
+                }
+                vertices2D.Reverse();
+                Triangulator tr = new Triangulator(vertices2D.Distinct().ToList<Vector2>());
+                int[] ids = tr.Triangulate();
+                if (ids.Length == 0)
+                {
+                    Debug.Log("fuck 0");
+                }
+                if (ids.Length < vertices2D.Count - 2)
+                {
+                    Debug.Log("fuck < n-2");
+                }
+
+                for (int j = 0; j < ids.Length; j++)
+                {
+                    tmpIndices.Add(tmpVertices.Count + ids[j]);
+                }
+                for (int j = 0; j < count; j++)
+                {
+                    float[] pos = tile.map.latLonToPixels(vertices2D[j].x, vertices2D[j].y);
+                    Vector3 v = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, h, -pos[1] + center[1] + tile.map.tileSize / 2);
+                    tmpVertices.Add(v);
+                }
+            }
+        }
+
         public void Update(bool active)
         {
             geom.SetActive(active);
