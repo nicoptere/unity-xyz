@@ -9,8 +9,8 @@ namespace XYZMap
 
         private List<TilePOI> pois = new List<TilePOI>();
         private List<TileExtrusion> extrusions = new List<TileExtrusion>();
-        private List<TileFlat> flatTiles = new List<TileFlat>();
-        private List<Extrusion> buildings = new List<Extrusion>();
+        private List<TileFlat> flats = new List<TileFlat>();
+        private List<TileLine> lines = new List<TileLine>();
 
         public TileVector( Map map, string quadKey)
         {
@@ -27,11 +27,11 @@ namespace XYZMap
             {
                 poi.Update(active);
             }
-            foreach (Extrusion building in buildings)
+            foreach (TileExtrusion extrusion in extrusions)
             {
-                building.Update(active);
+                extrusion.Update(active);
             }
-            foreach (TileFlat flat in flatTiles)
+            foreach (TileFlat flat in flats)
             {
                 flat.Update(active);
             }
@@ -50,20 +50,27 @@ namespace XYZMap
             }
             //*/
 
+            Color color = new Color(.9f, .9f, .9f);
             //buildings
-            extrusions.Add(new TileExtrusion(this, obj["buildings"]["features"], map.parent.tiles, new Color(.9f, .9f, .9f)));
+            extrusions.Add(new TileExtrusion(this, obj["buildings"]["features"], map.parent.tiles, color ));
             
             //landuse
-            flatTiles.Add(new TileFlat(this, obj["landuse"]["features"], map.parent.tiles, new Color(1, .6f, .0f), -5 ));
+            flats.Add(new TileFlat(this, obj["landuse"]["features"], map.parent.tiles, color, -5 ));
             
             //earth 
-            flatTiles.Add(new TileFlat(this, obj["earth"]["features"], map.parent.tiles, new Color(.0f, .8f, .3f), -10 ));
+            flats.Add(new TileFlat(this, obj["earth"]["features"], map.parent.tiles, color, -10 ));
             
             //water
-            flatTiles.Add(new TileFlat(this, obj["water"]["features"], map.parent.tiles, new Color(.1f, .6f, .95f),-15 ));
+            flats.Add(new TileFlat(this, obj["water"]["features"], map.parent.tiles, color,-15 ));
             //*/
 
+
+            //roads
+            /*
+            Color color = new Color(1, 0, 0);
+            lines.Add(new TileLine(this, obj["roads"]["features"], map.parent.tiles, color));
+            //*/
         }
-        
+
     }
 }

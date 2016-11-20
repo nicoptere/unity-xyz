@@ -95,10 +95,38 @@ namespace XYZMap
                 //*/
             }
 
+
             // Create the mesh
             Mesh mesh = new Mesh();
-            mesh.vertices = tmpVertices.ToArray();
-            mesh.triangles = tmpIndices.ToArray();
+
+            if( tile.map.parent.flatNormals)
+            {
+                List<Vector3> vertices = new List<Vector3>();
+                List<int> indices = new List<int>();
+                for( var i = 0; i < tmpIndices.Count; i+= 3)
+                {
+
+                    int i0 = tmpIndices[i];
+                    int i1 = tmpIndices[i+1];
+                    int i2 = tmpIndices[i+2];
+
+                    vertices.Add(tmpVertices[i0]);
+                    vertices.Add(tmpVertices[i1]);
+                    vertices.Add(tmpVertices[i2]);
+
+                    indices.Add(i);
+                    indices.Add(i+1);
+                    indices.Add(i+2);
+
+                }
+                mesh.vertices = vertices.ToArray();
+                mesh.triangles = indices.ToArray();
+            }
+            else
+            {
+                mesh.vertices = tmpVertices.ToArray();
+                mesh.triangles = tmpIndices.ToArray();
+            }
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
             

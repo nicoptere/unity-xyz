@@ -30,10 +30,13 @@ namespace XYZMap
             
             for (int i = 0; i < data.Count; i++)
             {
-                int id = (int)data[i]["properties"]["id"].n;
-                if (checkId && built.IndexOf(id) != -1) continue;
-                built.Add(id);
-                
+                if (checkId && data[i]["properties"]["id"] != null)
+                {
+                    int id = (int)data[i]["properties"]["id"].n;
+                    if (checkId && built.IndexOf(id) != -1) continue;
+                    built.Add(id);
+                }
+
                 if (data[i]["geometry"]["type"].str == "Polygon")
                 {
                     processPolygon( tileCenter, data[i]["geometry"]["coordinates"], ref tmpIndices, ref tmpVertices);
@@ -49,12 +52,37 @@ namespace XYZMap
             }
             
             // Create the mesh
-            Mesh msh = new Mesh();
-            msh.vertices = tmpVertices.ToArray();
-            msh.triangles = tmpIndices.ToArray();
-            
-            msh.RecalculateNormals();
-            msh.RecalculateBounds();
+            Mesh mesh = new Mesh();
+            if (tile.map.parent.flatNormals)
+            {
+                List<Vector3> vertices = new List<Vector3>();
+                List<int> indices = new List<int>();
+                for (var i = 0; i < tmpIndices.Count; i += 3)
+                {
+
+                    int i0 = tmpIndices[i];
+                    int i1 = tmpIndices[i + 1];
+                    int i2 = tmpIndices[i + 2];
+
+                    vertices.Add(tmpVertices[i0]);
+                    vertices.Add(tmpVertices[i1]);
+                    vertices.Add(tmpVertices[i2]);
+
+                    indices.Add(i);
+                    indices.Add(i + 1);
+                    indices.Add(i + 2);
+
+                }
+                mesh.vertices = vertices.ToArray();
+                mesh.triangles = indices.ToArray();
+            }
+            else
+            {
+                mesh.vertices = tmpVertices.ToArray();
+                mesh.triangles = tmpIndices.ToArray();
+            }
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
 
             gameObject = new GameObject();
             gameObject.transform.parent = parent.transform;
@@ -66,16 +94,16 @@ namespace XYZMap
             gameObject.AddComponent(typeof(MeshRenderer));
 
             MeshFilter filter = gameObject.AddComponent(typeof(MeshFilter)) as MeshFilter;
-            filter.mesh = msh;
+            filter.mesh = mesh;
 
             Renderer renderer = gameObject.GetComponent<Renderer>();
-            //renderer.material = new Material(  Shader.Find("Toon/Lit Outline"));//Shader.Find("Unlit/Color"));//
             renderer.material.color = color;// new Color(0.1f, 0.1f, 0.1f);
+            //renderer.material = new Material(  Shader.Find("Toon/Lit Outline"));//Shader.Find("Unlit/Color"));//
             //renderer.material.SetFloat("_Outline", .001f);
 
             //renderer.material = new Material( Shader.Find("Unlit/Color"));
-            renderer.material.SetFloat("_Metallic", .5f);
-            renderer.material.SetFloat("_Glossiness", .8f);
+            //renderer.material.SetFloat("_Metallic", .5f);
+            //renderer.material.SetFloat("_Glossiness", .8f);
             
         }
         

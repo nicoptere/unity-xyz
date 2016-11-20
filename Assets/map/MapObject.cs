@@ -21,6 +21,7 @@ public class MapObject : MonoBehaviour {
 
     public bool vectorTiles = true;
     public string vectorTileUrl = "https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.json?api_key=mapzen-foW3wh2";
+    public bool flatNormals = true;
 
     private Map map;
     public Camera orthographicCamera;
