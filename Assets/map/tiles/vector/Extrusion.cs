@@ -36,8 +36,7 @@ namespace XYZMap
                 Vector2 v = new Vector2(pos[0], -pos[1]);
                 vertices2D.Add(v);
             }
-
-            float thickness = 0;
+            
             float h = height * 1 / tile.map.resolution( tile.map.zoom );// 250 * Random.value;
             Vector3[] vertices = new Vector3[ count * 2 ];
             for (int i = 0; i < count * 2; i++)

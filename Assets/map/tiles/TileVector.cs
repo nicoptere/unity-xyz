@@ -8,7 +8,7 @@ namespace XYZMap
     {
 
         private List<TilePOI> pois = new List<TilePOI>();
-        private List<TileExtrusion> blocks = new List<TileExtrusion>();
+        private List<TileExtrusion> extrusions = new List<TileExtrusion>();
         private List<TileFlat> flatTiles = new List<TileFlat>();
         private List<Extrusion> buildings = new List<Extrusion>();
 
@@ -50,20 +50,19 @@ namespace XYZMap
             }
             //*/
 
-
-            JSONObject EarthData = obj["landuse"]["features"];
-            flatTiles.Add(new TileFlat(this, EarthData, map.parent.tiles, new Color( 1, .6f, .0f), 10, false));
-
-            EarthData = obj["earth"]["features"];
-            flatTiles.Add(new TileFlat(this, EarthData, map.parent.tiles, new Color(.0f, .8f, .3f), 5, false));
-
-            JSONObject WaterData = obj["water"]["features"];
-            flatTiles.Add(new TileFlat(this, WaterData, map.parent.tiles, new Color(.1f, .6f, .95f), 0, false));
+            //buildings
+            extrusions.Add(new TileExtrusion(this, obj["buildings"]["features"], map.parent.tiles, new Color(.9f, .9f, .9f)));
             
-            JSONObject BlocksData = obj["buildings"]["features"];
-            blocks.Add(new TileExtrusion(this, BlocksData, map.parent.tiles, new Color(.9f, .9f, .9f)));
+            //landuse
+            flatTiles.Add(new TileFlat(this, obj["landuse"]["features"], map.parent.tiles, new Color(1, .6f, .0f), -5 ));
             
+            //earth 
+            flatTiles.Add(new TileFlat(this, obj["earth"]["features"], map.parent.tiles, new Color(.0f, .8f, .3f), -10 ));
+            
+            //water
+            flatTiles.Add(new TileFlat(this, obj["water"]["features"], map.parent.tiles, new Color(.1f, .6f, .95f),-15 ));
             //*/
+
         }
         
     }

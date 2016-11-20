@@ -64,6 +64,8 @@ public class MapObject : MonoBehaviour {
             renderer.material.mainTexture = RT;
             renderer.material.shader = Shader.Find("Unlit/Texture");
 
+            gameObject.transform.position = new Vector3(0, -50000, 0);
+            gameObject.hideFlags = HideFlags.HideInHierarchy;
             vectorTiles = false;
         }
 

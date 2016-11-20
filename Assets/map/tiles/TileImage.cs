@@ -16,7 +16,12 @@ namespace XYZMap
         {
             if (!loaded) return;
             Vector3 pos = map.parent.gameObject.transform.position;
-            pos.y = map.parent.orthographicCamera.transform.position.y;
+            
+            if (map.parent.renderToTexture)
+            {
+                gameObject.hideFlags = HideFlags.HideInHierarchy;
+                pos.y = map.parent.orthographicCamera.transform.position.y;
+            }
 
             gameObject.SetActive(active);
             if( active)

@@ -9,12 +9,12 @@ namespace XYZMap
         MapTile tile;
         JSONObject data;
         GameObject parent;
-        GameObject geom;
+        GameObject gameObject;
         Vector2 center;
         static private List<int> built = new List<int>();
 
         float lat, lng;
-        public TileExtrusion(MapTile tile, JSONObject data, GameObject parent, Color color, bool checkId = true )
+        public TileExtrusion(MapTile tile, JSONObject data, GameObject parent, Color color, bool checkId = false )
         {
 
             this.tile = tile;
@@ -24,30 +24,37 @@ namespace XYZMap
             List<int> tmpIndices = new List<int>();
             List<Vector3> tmpVertices = new List<Vector3>();
             
-            float thickness = 0;
             for (int i = 0; i < data.Count; i++)
             {
-                float h = 3;
-                if( checkId && data[i]["properties"]["id"].n != null )
+                JSONObject properties = data[i]["properties"];
+                
+                if (checkId && properties["id"] != null)
                 {
-                    h *= 10 * Random.value;
-                    int id = (int)data[i]["properties"]["id"].n;
+                    int id = (int)properties["id"].n;
                     if (built.IndexOf(id) != -1) continue;
                     built.Add(id);
-                
-                    if (data[i]["properties"]["height"] != null)
-                    {
-                        h = data[i]["properties"]["height"].n;
-                        //Debug.Log("height" + h);
-                    }
-                    if (data[i]["properties"]["min_height"] != null) {
-                        h = data[i]["properties"]["min_height"].n;
-                        //Debug.Log("min_height" + h);
-                    }
+                }
+                //*/
+
+                float height = getHeight(data[i]["properties"]);
+
+                JSONObject geometry = data[i]["geometry"];
+                if (geometry["type"].str == "Polygon")
+                {
+                    processPolygon( height, geometry["coordinates"], ref tmpIndices, ref tmpVertices);
                 }
 
-                h *= 1 / tile.map.resolution(tile.map.zoom);
-
+                if (geometry["type"].str == "MultiPolygon")
+                {
+                    for (int j = 0; j < geometry["coordinates"].Count; j++)
+                    {
+                        JSONObject poly = geometry["coordinates"][j];
+                        processPolygon( height, poly, ref tmpIndices, ref tmpVertices);
+                    }
+                }
+                //*/
+                /*
+                float h = getHeight(data[i]["properties"]);
                 if ( data[i]["geometry"]["type"].str == "Polygon")
                 {
                     JSONObject bunch = data[i]["geometry"]["coordinates"];
@@ -80,33 +87,86 @@ namespace XYZMap
                         {
                             float x = vertices2D[j % count].x - tile.map.tileSize / 2;
                             float y = vertices2D[j % count].y + tile.map.tileSize / 2;
-                            Vector3 v = new Vector3(x, (j >= count) ? h + 5: 5, y);
+                            Vector3 v = new Vector3(x, (j >= count) ? h:0, y);
                             tmpVertices.Add(v);
                         }
                     }
                 }
+                //*/
             }
-            
+
             // Create the mesh
-            Mesh msh = new Mesh();
-            msh.vertices = tmpVertices.ToArray();
-            msh.triangles = tmpIndices.ToArray();
-            msh.RecalculateNormals();
-            msh.RecalculateBounds();
+            Mesh mesh = new Mesh();
+            mesh.vertices = tmpVertices.ToArray();
+            mesh.triangles = tmpIndices.ToArray();
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
             
-            geom = new GameObject();
-            geom.transform.parent = parent.transform;
-            geom.AddComponent(typeof(MeshRenderer));
-            geom.hideFlags = HideFlags.HideInHierarchy;
+            gameObject = new GameObject();
+            gameObject.transform.parent = parent.transform;
+            gameObject.AddComponent(typeof(MeshRenderer));
+            gameObject.hideFlags = HideFlags.HideInHierarchy;
 
-            MeshFilter filter = geom.AddComponent(typeof(MeshFilter)) as MeshFilter;
-            filter.mesh = msh;
+            MeshFilter filter = gameObject.AddComponent(typeof(MeshFilter)) as MeshFilter;
+            filter.mesh = mesh;
 
-            Renderer renderer = geom.GetComponent<Renderer>();
+            Renderer renderer = gameObject.GetComponent<Renderer>();
             renderer.material.color = color;
-            renderer.material.SetFloat("_Metallic", .5f);
-            renderer.material.SetFloat("_Glossiness", .8f);
             
+        }
+
+        private float getHeight( JSONObject data)
+        {
+
+            float h = 1;
+            if (data["height"] != null)
+            {
+                h = data["height"].n;
+            }
+            if (data["min_height"] != null)
+            {
+                h = data["min_height"].n;
+            }
+            //world scale
+            h *= 1 / tile.map.resolution(tile.map.zoom);
+            return h;
+
+        }
+
+        public void processPolygon(float height, JSONObject polygon, ref List<int> tmpIndices, ref List<Vector3> tmpVertices)
+        {
+            for (int k = 0; k < polygon.Count; k++)
+            {
+                JSONObject poly = polygon[k];
+                int count = poly.Count;
+
+                List<Vector2> vertices2D = new List<Vector2>();
+                for (int j = 0; j < count; j++)
+                {
+                    float[] pos = tile.map.latLonToPixels(poly[j][1].n, poly[j][0].n);
+                    vertices2D.Add(new Vector2(pos[0], -pos[1]));
+                }
+
+                vertices2D = vertices2D.Distinct().ToList<Vector2>();
+                count = vertices2D.Count;
+
+                Triangulator tr = new Triangulator(vertices2D);
+                int[] ids = tr.Triangulate();
+                int offset = tmpVertices.Count;
+                int[] inds = processIndices(ids, count, offset);
+                for (int j = 0; j < inds.Length; j++)
+                {
+                    tmpIndices.Add(inds[j]);
+                }
+
+                for (int j = 0; j < count * 2; j++)
+                {
+                    float x = vertices2D[j % count].x - tile.map.tileSize / 2;
+                    float y = vertices2D[j % count].y + tile.map.tileSize / 2;
+                    Vector3 v = new Vector3(x, (j >= count) ? height : 0, y);
+                    tmpVertices.Add(v);
+                }
+            }
         }
 
         private int[] processIndices(int[] capIndices, int verticesCount, int offset)
@@ -158,20 +218,19 @@ namespace XYZMap
         public void Update(bool active)
         {
             return;
-            geom.SetActive(active);
+            gameObject.SetActive(active);
             if (active)
             {
                 float[] p = tile.map.latLonToPixels(lat, lng);
-                geom.transform.position = new Vector3(p[0], 2, -p[1]);
+                gameObject.transform.position = new Vector3(p[0], 2, -p[1]);
 
                 if (p[0] < -tile.map.width / 2 || p[0] > tile.map.width / 2) active = false;
                 if (-p[1] < -tile.map.height / 2 || -p[1] > tile.map.height / 2) active = false;
 
             }
-            Renderer renderer = geom.GetComponent<Renderer>();
+            Renderer renderer = gameObject.GetComponent<Renderer>();
             renderer.material.color = active == true ? new Color(1, 1, 0) : new Color(0, .3f, .6f);
-
-
+            
         }
 
     }

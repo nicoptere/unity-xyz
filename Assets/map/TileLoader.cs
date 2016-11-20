@@ -77,7 +77,7 @@ namespace XYZMap
         //https://tile.mapzen.com/mapzen/vector/v1/all/15/9648/12322.json?api_key=mapzen-foW3wh2
         public IEnumerator loadData(MapTile tile)
         {
-            Debug.Log("loading: " + tile.url );
+            //Debug.Log("loading: " + tile.url );
             loading++;
 
             WWW www = new WWW(tile.url);

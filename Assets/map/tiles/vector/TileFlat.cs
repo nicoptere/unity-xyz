@@ -9,12 +9,12 @@ namespace XYZMap
         MapTile tile;
         JSONObject data;
         GameObject parent;
-        GameObject geom;
+        GameObject gameObject;
         Vector2 center;
         static private List<int> built = new List<int>();
 
         float lat, lng;
-        public TileFlat(MapTile tile, JSONObject data, GameObject parent, Color color, float height = 1, bool checkId = true)
+        public TileFlat(MapTile tile, JSONObject data, GameObject parent, Color color, float height = 1, bool checkId = false )
         {
 
             this.tile = tile;
@@ -56,19 +56,19 @@ namespace XYZMap
             msh.RecalculateNormals();
             msh.RecalculateBounds();
 
-            geom = new GameObject();
-            geom.transform.parent = parent.transform;
-            geom.hideFlags = HideFlags.HideInHierarchy;
+            gameObject = new GameObject();
+            gameObject.transform.parent = parent.transform;
+            gameObject.hideFlags = HideFlags.HideInHierarchy;
 
             float[] p = tile.map.latLonToPixels(lat, lng);
-            geom.transform.position = new Vector3(p[0], height, -p[1]);
+            gameObject.transform.position = new Vector3(p[0], height, -p[1]);
 
-            geom.AddComponent(typeof(MeshRenderer));
+            gameObject.AddComponent(typeof(MeshRenderer));
 
-            MeshFilter filter = geom.AddComponent(typeof(MeshFilter)) as MeshFilter;
+            MeshFilter filter = gameObject.AddComponent(typeof(MeshFilter)) as MeshFilter;
             filter.mesh = msh;
 
-            Renderer renderer = geom.GetComponent<Renderer>();
+            Renderer renderer = gameObject.GetComponent<Renderer>();
             //renderer.material = new Material(  Shader.Find("Toon/Lit Outline"));//Shader.Find("Unlit/Color"));//
             renderer.material.color = color;// new Color(0.1f, 0.1f, 0.1f);
             //renderer.material.SetFloat("_Outline", .001f);
@@ -95,15 +95,14 @@ namespace XYZMap
                     vertices2D.Add(v);
                 }
                 vertices2D.Reverse();
+
                 Triangulator tr = new Triangulator(vertices2D.Distinct().ToList<Vector2>());
                 int[] ids = tr.Triangulate();
+
                 if (ids.Length == 0)
                 {
-                    Debug.Log("fuck 0");
-                }
-                if (ids.Length < vertices2D.Count - 2)
-                {
-                    Debug.Log("fuck < n-2");
+                    Debug.LogWarning("couldn't triangulate object in tile " + tile.quadKey );
+                    continue;
                 }
 
                 for (int j = 0; j < ids.Length; j++)
@@ -121,11 +120,19 @@ namespace XYZMap
 
         public void Update(bool active)
         {
-            geom.SetActive(active);
+            gameObject.SetActive(active);
+
+            Vector3 pos = tile.map.parent.gameObject.transform.position;
+
+            if (tile.map.parent.renderToTexture)
+            {
+                gameObject.hideFlags = HideFlags.HideInHierarchy;
+                pos.y = tile.map.parent.orthographicCamera.transform.position.y;
+            }
             if (active)
             {
                 float[] p = tile.map.latLonToPixels(lat, lng);
-                geom.transform.position = new Vector3(p[0], 0, -p[1]);
+                gameObject.transform.position = new Vector3(p[0], 0, -p[1]);
             }
         }
 
