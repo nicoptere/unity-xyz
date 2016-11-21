@@ -16,7 +16,7 @@ namespace XYZMap
         static private List<int> built = new List<int>();
 
         float lat, lng;
-        public TileLine(MapTile tile, JSONObject data, GameObject parent, Color color, float height = 1, bool checkId = false)
+        public TileLine(MapTile tile, JSONObject data, GameObject parent, Color color, List<string> type, float width = 1, bool checkId = false )
         {
 
             this.tile = tile;
@@ -32,19 +32,26 @@ namespace XYZMap
 
             for (int i = 0; i < data.Count; i++)
             {
-
-                if( checkId && data[i]["properties"]["id"] != null)
+                JSONObject properties = data[i]["properties"];
+                if( checkId && properties["id"] != null)
                 {
-                    int id = (int)data[i]["properties"]["id"].n;
+                    int id = (int)properties["id"].n;
                     if (checkId && built.IndexOf(id) != -1) continue;
                     built.Add(id);
                 }
 
-                JSONObject geometry = data[i]["geometry"];
+                string kind = properties["kind"].str;
+                if (type.IndexOf(kind) == -1)
+                {
+                    //Debug.Log(kind);
+                    continue;
+                }
 
+                
+                JSONObject geometry = data[i]["geometry"];
                 if ( geometry["type"].str == "LineString" )
                 {
-                    processSegment(tileCenter, geometry["coordinates"], ref tmpIndices, ref tmpVertices);
+                    processSegment(tileCenter, width, geometry["coordinates"], ref tmpIndices, ref tmpVertices);
                 }
                 
                 if ( geometry["type"].str == "MultiLineString")
@@ -52,10 +59,9 @@ namespace XYZMap
                     for (int j = 0; j < geometry["coordinates"].Count; j++)
                     {
                         JSONObject poly = geometry["coordinates"][j];
-                        processSegment(tileCenter, poly, ref tmpIndices, ref tmpVertices);
+                        processSegment(tileCenter, width, poly, ref tmpIndices, ref tmpVertices);
                     }
                 }
-                //*/
             }
 
 
@@ -71,26 +77,28 @@ namespace XYZMap
             gameObject.hideFlags = HideFlags.HideInHierarchy;
 
             float[] p = tile.map.latLonToPixels(lat, lng);
-            gameObject.transform.position = new Vector3(p[0], height, -p[1]);
+            gameObject.transform.position = new Vector3(p[0], 0, -p[1]);
 
             gameObject.AddComponent(typeof(MeshRenderer));
             MeshFilter filter = gameObject.AddComponent(typeof(MeshFilter)) as MeshFilter;
             filter.mesh = mesh;
 
             Renderer renderer = gameObject.GetComponent<Renderer>();
-            renderer.material.color = color;
+            renderer.material = new Material(Shader.Find("Unlit/Color"));
+            renderer.material.SetColor( "_Color", color );
 
         }
 
 
-        Vector3 normal( Vector3 a, Vector3 b)
+        Vector3 normal( Vector3 a, Vector3 b, float width = 1)
         {
-            Vector3 v = new Vector3(-(b.y - a.y), ( a.y + b.y ) / 2, (b.x - a.x));
+            Vector3 v = new Vector3(-(b.z - a.z), 0, (b.x - a.x));
             v.Normalize();
+            v *= width;
             return v;
         }
 
-        public void processSegment(float[] center, JSONObject polygon, ref List<int> tmpIndices, ref List<Vector3> tmpVertices)
+        public void processSegment(float[] center, float width, JSONObject polygon, ref List<int> tmpIndices, ref List<Vector3> tmpVertices)
         {
 
             float[] pos = tile.map.latLonToPixels(polygon[0][1].n, polygon[0][0].n);
@@ -99,44 +107,39 @@ namespace XYZMap
             pos = tile.map.latLonToPixels(polygon[1][1].n, polygon[1][0].n);
             Vector3 b = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 5, -pos[1] + center[1] + tile.map.tileSize / 2);
 
-            float width = 5 * 1 / tile.map.resolution(tile.map.zoom);
-            Vector3 norm = normal( a, b ) * width;
+            Vector3 norm = normal( a, b, width * .5f );
             Vector3 ln0 = a + norm;
             Vector3 ln1 = b + norm;
 
-            norm = normal( b, a ) * width;
+            norm = normal( b, a, width * .5f);
             Vector3 rn0 = a + norm;
             Vector3 rn1 = b + norm;
 
             int id = tmpVertices.Count;
 
+            //front
             tmpIndices.Add(id);
             tmpIndices.Add(id+1);
             tmpIndices.Add(id+2);
-
+            
             tmpIndices.Add(id+2);
             tmpIndices.Add(id+3);
             tmpIndices.Add(id);
-            
+
+            //back
+            tmpIndices.Add(id + 1);
+            tmpIndices.Add(id);
+            tmpIndices.Add(id + 2);
+
+            tmpIndices.Add(id + 2);
+            tmpIndices.Add(id);
+            tmpIndices.Add(id + 3);
 
             tmpVertices.Add(ln0);
             tmpVertices.Add(ln1);
             tmpVertices.Add(rn1);
             tmpVertices.Add(rn0);
-
-
-            /*
-            LineBuffer.addPoint(v);
-            }
-            try{
-                //Debug.Log("ok");// geometry["type"].str + " " + geometry["coordinates"].Count);
-            }
-            catch(Exception e)
-            {
-                //Debug.Log("no " + e.ToString() );// geometry["type"].str + " " + geometry["coordinates"].Count);
-
-            }
-            //*/
+            
         }
 
         public void Update(bool active)

@@ -66,10 +66,23 @@ namespace XYZMap
             //*/
 
 
-            //roads
+            //roads types:
+            //highway, major_road, minor_road, path, aeroway, rail, ferry, piste, aerialway, racetrack, portage_way
+
+            float scale = 1 / map.resolution(map.zoom);
             
             color = new Color(1, 0, 0);
-            lines.Add(new TileLine(this, obj["roads"]["features"], map.parent.tiles, color));
+            List<string> roads = new List<string>(new string[] { "highway", "major_road", "minor_road" });
+            lines.Add(new TileLine(this, obj["roads"]["features"], map.parent.tiles, color, roads, 2 * scale ));
+
+            color = new Color( 0,1, 0);
+            List<string> rails = new List<string>(new string[] { "rail" });
+            lines.Add(new TileLine(this, obj["roads"]["features"], map.parent.tiles, color, rails, 4 * scale));
+            
+            /*
+            color = new Color( 0, 0,1);
+            List<string> boats = new List<string>(new string[] { "ferry" });
+            lines.Add(new TileLine(this, obj["roads"]["features"], map.parent.tiles, color, boats, 10 * scale));
             //*/
         }
 
