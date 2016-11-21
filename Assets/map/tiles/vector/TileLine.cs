@@ -23,9 +23,9 @@ namespace XYZMap
             this.data = data;
             this.parent = parent;
 
-            //Debug.Log("> " + LineBuffer.points );
-            //LineBuffer.addPoint(new Vector3(-100, 100, 0));
-            return;
+            List<int> tmpIndices = new List<int>();
+            List<Vector3> tmpVertices = new List<Vector3>();
+
             lat = tile.lat;
             lng = tile.lng;
             float[] tileCenter = tile.map.latLonToPixels(lat, lng);
@@ -44,40 +44,90 @@ namespace XYZMap
 
                 if ( geometry["type"].str == "LineString" )
                 {
-                    processLine(tileCenter, geometry["coordinates"]);
+                    processSegment(tileCenter, geometry["coordinates"], ref tmpIndices, ref tmpVertices);
                 }
-                /*
+                
                 if ( geometry["type"].str == "MultiLineString")
                 {
                     for (int j = 0; j < geometry["coordinates"].Count; j++)
                     {
                         JSONObject poly = geometry["coordinates"][j];
-                        processLine(tileCenter, poly);
+                        processSegment(tileCenter, poly, ref tmpIndices, ref tmpVertices);
                     }
                 }
                 //*/
             }
+
+
+            // Create the mesh
+            Mesh mesh = new Mesh();
+            mesh.vertices = tmpVertices.ToArray();
+            mesh.triangles = tmpIndices.ToArray();
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+
+            gameObject = new GameObject();
+            gameObject.transform.parent = parent.transform;
+            gameObject.hideFlags = HideFlags.HideInHierarchy;
+
+            float[] p = tile.map.latLonToPixels(lat, lng);
+            gameObject.transform.position = new Vector3(p[0], height, -p[1]);
+
+            gameObject.AddComponent(typeof(MeshRenderer));
+            MeshFilter filter = gameObject.AddComponent(typeof(MeshFilter)) as MeshFilter;
+            filter.mesh = mesh;
+
+            Renderer renderer = gameObject.GetComponent<Renderer>();
+            renderer.material.color = color;
+
         }
 
-        public void processLine(float[] center, JSONObject polygon)
+
+        Vector3 normal( Vector3 a, Vector3 b)
         {
-            //Debug.Log("c " + polygon.Count );
-            for (int k = 0; k < polygon.Count; k++)
-            {
-                JSONObject poly = polygon[k];
-                /*
-                int count = poly.Count;
-                Debug.Log("  > " + count );
-                for (int j = 0; j < count; j++)
-                {
-                Debug.Log("  > " + polygon[j][0].n + " " + polygon[j][1].n);
-                //*/
-                    float[] pos = tile.map.latLonToPixels(polygon[1].n, polygon[0].n);
-                    Vector3 v = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 5, -pos[1] + center[1] + tile.map.tileSize / 2);
-                    LineBuffer.addPoint(v);
-                //}
-            }
+            Vector3 v = new Vector3(-(b.y - a.y), ( a.y + b.y ) / 2, (b.x - a.x));
+            v.Normalize();
+            return v;
+        }
+
+        public void processSegment(float[] center, JSONObject polygon, ref List<int> tmpIndices, ref List<Vector3> tmpVertices)
+        {
+
+            float[] pos = tile.map.latLonToPixels(polygon[0][1].n, polygon[0][0].n);
+            Vector3 a = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 5, -pos[1] + center[1] + tile.map.tileSize / 2);
+
+            pos = tile.map.latLonToPixels(polygon[1][1].n, polygon[1][0].n);
+            Vector3 b = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 5, -pos[1] + center[1] + tile.map.tileSize / 2);
+
+            float width = 5 * 1 / tile.map.resolution(tile.map.zoom);
+            Vector3 norm = normal( a, b ) * width;
+            Vector3 ln0 = a + norm;
+            Vector3 ln1 = b + norm;
+
+            norm = normal( b, a ) * width;
+            Vector3 rn0 = a + norm;
+            Vector3 rn1 = b + norm;
+
+            int id = tmpVertices.Count;
+
+            tmpIndices.Add(id);
+            tmpIndices.Add(id+1);
+            tmpIndices.Add(id+2);
+
+            tmpIndices.Add(id+2);
+            tmpIndices.Add(id+3);
+            tmpIndices.Add(id);
+            
+
+            tmpVertices.Add(ln0);
+            tmpVertices.Add(ln1);
+            tmpVertices.Add(rn1);
+            tmpVertices.Add(rn0);
+
+
             /*
+            LineBuffer.addPoint(v);
+            }
             try{
                 //Debug.Log("ok");// geometry["type"].str + " " + geometry["coordinates"].Count);
             }

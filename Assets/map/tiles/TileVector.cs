@@ -51,6 +51,7 @@ namespace XYZMap
             //*/
 
             Color color = new Color(.9f, .9f, .9f);
+            
             //buildings
             extrusions.Add(new TileExtrusion(this, obj["buildings"]["features"], map.parent.tiles, color ));
             
@@ -66,8 +67,8 @@ namespace XYZMap
 
 
             //roads
-            /*
-            Color color = new Color(1, 0, 0);
+            
+            color = new Color(1, 0, 0);
             lines.Add(new TileLine(this, obj["roads"]["features"], map.parent.tiles, color));
             //*/
         }
