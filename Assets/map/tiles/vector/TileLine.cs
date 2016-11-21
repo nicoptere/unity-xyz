@@ -13,8 +13,9 @@ namespace XYZMap
         GameObject parent;
         GameObject gameObject;
         Vector2 center;
-        static private List<int> built = new List<int>();
+        private Color color;
 
+        static private List<int> built = new List<int>();
         float lat, lng;
         public TileLine(MapTile tile, JSONObject data, GameObject parent, Color color, List<string> type, float width = 1, bool checkId = false )
         {
@@ -22,6 +23,7 @@ namespace XYZMap
             this.tile = tile;
             this.data = data;
             this.parent = parent;
+            this.color = color;
 
             List<int> tmpIndices = new List<int>();
             List<Vector3> tmpVertices = new List<Vector3>();
@@ -43,7 +45,7 @@ namespace XYZMap
                 string kind = properties["kind"].str;
                 if (type.IndexOf(kind) == -1)
                 {
-                    //Debug.Log(kind);
+                    Debug.Log(kind);
                     continue;
                 }
 
@@ -56,14 +58,29 @@ namespace XYZMap
                 
                 if ( geometry["type"].str == "MultiLineString")
                 {
-                    for (int j = 0; j < geometry["coordinates"].Count; j++)
+
+                    for (int j = 0; j < geometry["coordinates"].Count-1; j++ )
                     {
-                        JSONObject poly = geometry["coordinates"][j];
-                        processSegment(tileCenter, width, poly, ref tmpIndices, ref tmpVertices);
+                        JSONObject polygon = geometry["coordinates"];
+                        
+                        float[] pos = tile.map.latLonToPixels(polygon[ j ][1].n, polygon[ j ][0].n);
+                        Vector3 a = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 0, -pos[1] + center[1] + tile.map.tileSize / 2);
+
+                        pos = tile.map.latLonToPixels(polygon[ j + 1][1].n, polygon[ j+1 ][0].n);
+                        Vector3 b = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 0, -pos[1] + center[1] + tile.map.tileSize / 2);
+                        appendSegment(a, b, width, ref tmpIndices, ref tmpVertices);
+                        //Debug.Log( i + " multi " + j + " " + a.x + " " + b.x);
+                        
                     }
                 }
             }
 
+            commitMesh(ref tmpIndices, ref tmpVertices);
+
+        }
+
+        void commitMesh( ref List<int> tmpIndices, ref List<Vector3> tmpVertices )
+        {
 
             // Create the mesh
             Mesh mesh = new Mesh();
@@ -85,10 +102,12 @@ namespace XYZMap
 
             Renderer renderer = gameObject.GetComponent<Renderer>();
             renderer.material = new Material(Shader.Find("Unlit/Color"));
-            renderer.material.SetColor( "_Color", color );
+            renderer.material.SetColor("_Color", color);
+
+            tmpIndices.Clear();
+            tmpIndices.Clear();
 
         }
-
 
         Vector3 normal( Vector3 a, Vector3 b, float width = 1)
         {
@@ -100,12 +119,23 @@ namespace XYZMap
 
         public void processSegment(float[] center, float width, JSONObject polygon, ref List<int> tmpIndices, ref List<Vector3> tmpVertices)
         {
-
+            
             float[] pos = tile.map.latLonToPixels(polygon[0][1].n, polygon[0][0].n);
-            Vector3 a = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 5, -pos[1] + center[1] + tile.map.tileSize / 2);
+            Vector3 a = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 0, -pos[1] + center[1] + tile.map.tileSize / 2);
 
             pos = tile.map.latLonToPixels(polygon[1][1].n, polygon[1][0].n);
-            Vector3 b = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 5, -pos[1] + center[1] + tile.map.tileSize / 2);
+            Vector3 b = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 0, -pos[1] + center[1] + tile.map.tileSize / 2);
+            appendSegment(a, b, width, ref tmpIndices, ref tmpVertices);
+
+        }
+
+        private void appendSegment( Vector3 a, Vector3 b, float width, ref List<int> tmpIndices, ref List<Vector3> tmpVertices) { 
+            
+            //prevent buffer overflow
+            if (tmpVertices.Count + 4 >= Mathf.Pow(2, 16))
+            {
+                commitMesh(ref tmpIndices, ref tmpVertices);
+            }
 
             Vector3 norm = normal( a, b, width * .5f );
             Vector3 ln0 = a + norm;

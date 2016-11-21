@@ -29,8 +29,6 @@ public class MapObject : MonoBehaviour {
     
     void Awake()
     {
-        Debug.Log(this);
-
         //tiles container
         tiles = new GameObject();
         tiles.transform.parent = gameObject.transform;
@@ -150,7 +148,7 @@ public class MapObject : MonoBehaviour {
 
         //-22.90979, -43.17625 Rio
         //map.setView(40.70719977f, -74.01516826f, 15 );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
-        //map.setView(48.80f + dx, 2.32f + dy, map.zoom );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
+        //map.setView(48.866667, 2.333333, map.zoom );// + Mathf.Round( ( .5f + Mathf.Sin( Time.time ) * .5f ) * 15 ) );
         
         RenderTexture currentRT = RenderTexture.active;
         RenderTexture.active = cam.targetTexture;

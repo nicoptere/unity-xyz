@@ -72,9 +72,10 @@ namespace XYZMap
             float scale = 1 / map.resolution(map.zoom);
             
             color = new Color(1, 0, 0);
-            List<string> roads = new List<string>(new string[] { "highway", "major_road", "minor_road" });
+            List<string> roads = new List<string>(new string[] { "highway", "major_road", "minor_road", "path" });//, "rail" });
             lines.Add(new TileLine(this, obj["roads"]["features"], map.parent.tiles, color, roads, 2 * scale ));
 
+            /*
             color = new Color( 0,1, 0);
             List<string> rails = new List<string>(new string[] { "rail" });
             lines.Add(new TileLine(this, obj["roads"]["features"], map.parent.tiles, color, rails, 4 * scale));

@@ -11,15 +11,20 @@ namespace XYZMap
         GameObject parent;
         GameObject gameObject;
         Vector2 center;
-        static private List<int> built = new List<int>();
+        private Color color;
+        private float height;
 
+        static private List<int> built = new List<int>();
         float lat, lng;
+
         public TileFlat(MapTile tile, JSONObject data, GameObject parent, Color color, float height = 1, bool checkId = false )
         {
 
             this.tile = tile;
             this.data = data;
             this.parent = parent;
+            this.color = color;
+            this.height = height;
 
             List<int> tmpIndices = new List<int>();
             List<Vector3> tmpVertices = new List<Vector3>();
@@ -51,6 +56,13 @@ namespace XYZMap
                 }
             }
             
+            commitMesh(ref tmpIndices, ref tmpVertices);
+
+        }
+
+        void commitMesh(ref List<int> tmpIndices, ref List<Vector3> tmpVertices)
+        {
+
             // Create the mesh
             Mesh mesh = new Mesh();
             if (tile.map.parent.flatNormals)
@@ -98,15 +110,22 @@ namespace XYZMap
 
             Renderer renderer = gameObject.GetComponent<Renderer>();
             renderer.material.color = color;// new Color(0.1f, 0.1f, 0.1f);
-            //renderer.material = new Material(  Shader.Find("Toon/Lit Outline"));//Shader.Find("Unlit/Color"));//
-            //renderer.material.SetFloat("_Outline", .001f);
+                                            //renderer.material = new Material(  Shader.Find("Toon/Lit Outline"));//Shader.Find("Unlit/Color"));//
+                                            //renderer.material.SetFloat("_Outline", .001f);
+
+            Material mat = new Material(Shader.Find("Unlit/Wireframe"));
+            mat.SetColor("Color", color);
+            renderer.material = mat;
 
             //renderer.material = new Material( Shader.Find("Unlit/Color"));
             //renderer.material.SetFloat("_Metallic", .5f);
             //renderer.material.SetFloat("_Glossiness", .8f);
-            
+
+            tmpIndices.Clear();
+            tmpIndices.Clear();
+
         }
-        
+
         public void processPolygon( float[] center, JSONObject polygon, ref List<int> tmpIndices, ref List<Vector3> tmpVertices )
         {
 
@@ -131,6 +150,12 @@ namespace XYZMap
                 {
                     Debug.LogWarning("couldn't triangulate object in tile " + tile.quadKey );
                     continue;
+                }
+
+                //prevent buffer overflow
+                if (tmpIndices.Count + ids.Length >= Mathf.Pow(2, 16))
+                {
+                    commitMesh(ref tmpIndices, ref tmpVertices);
                 }
 
                 for (int j = 0; j < ids.Length; j++)
