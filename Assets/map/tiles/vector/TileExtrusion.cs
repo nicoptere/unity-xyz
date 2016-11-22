@@ -230,7 +230,7 @@ namespace XYZMap
             {
                 renderer.material.color = color;
             }
-                renderer.material.color = color;
+            renderer.material.color = color;
 
             tmpIndices.Clear();
             tmpIndices.Clear();
@@ -239,7 +239,7 @@ namespace XYZMap
 
         public void Update(bool active)
         {
-            return;
+
             gameObject.SetActive(active);
             if (active)
             {

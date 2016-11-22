@@ -50,8 +50,9 @@ namespace XYZMap
             }
             //*/
 
-            Color color = new Color(.9f, .9f, .9f);
+            Color color = new Color(Random.value + .5f, Random.value + .5f, Random.value + .5f);
             
+            /*
             //buildings
             extrusions.Add(new TileExtrusion(this, obj["buildings"]["features"], map.parent.tiles, color ));
             
@@ -71,8 +72,8 @@ namespace XYZMap
 
             float scale = 1 / map.resolution(map.zoom);
             
-            color = new Color(1, 0, 0);
-            List<string> roads = new List<string>(new string[] { "highway", "major_road", "minor_road", "path" });//, "rail" });
+            color = new Color(Random.value + .5f, Random.value + .5f, Random.value + .5f);
+            List<string> roads = new List<string>(new string[] { "highway", "major_road", "minor_road" });//, "rail" });
             lines.Add(new TileLine(this, obj["roads"]["features"], map.parent.tiles, color, roads, 2 * scale ));
 
             /*

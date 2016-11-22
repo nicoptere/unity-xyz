@@ -12,7 +12,6 @@ namespace XYZMap
         JSONObject data;
         GameObject parent;
         GameObject gameObject;
-        Vector2 center;
         private Color color;
 
         static private List<int> built = new List<int>();
@@ -53,24 +52,42 @@ namespace XYZMap
                 JSONObject geometry = data[i]["geometry"];
                 if ( geometry["type"].str == "LineString" )
                 {
+                    
+                    JSONObject polygon = geometry["coordinates"];
+                    for (int k = 0; k < polygon.Count - 1; k++)
+                    {
+                        float[] pos = tile.map.latLonToPixels(polygon[k][1].n, polygon[k][0].n);
+                        Vector3 a = new Vector3(pos[0] - tileCenter[0] - tile.map.tileSize / 2, 0, -pos[1] + tileCenter[1] + tile.map.tileSize / 2);
+
+                        pos = tile.map.latLonToPixels(polygon[k + 1][1].n, polygon[k + 1][0].n);
+                        Vector3 b = new Vector3(pos[0] - tileCenter[0] - tile.map.tileSize / 2, 0, -pos[1] + tileCenter[1] + tile.map.tileSize / 2);
+
+                        appendSegment(a, b, width, ref tmpIndices, ref tmpVertices);
+                    }
+
                     processSegment(tileCenter, width, geometry["coordinates"], ref tmpIndices, ref tmpVertices);
                 }
                 
                 if ( geometry["type"].str == "MultiLineString")
                 {
 
-                    for (int j = 0; j < geometry["coordinates"].Count-1; j++ )
+                    for (int j = 0; j < geometry["coordinates"].Count; j++ )
                     {
                         JSONObject polygon = geometry["coordinates"];
                         
-                        float[] pos = tile.map.latLonToPixels(polygon[ j ][1].n, polygon[ j ][0].n);
-                        Vector3 a = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 0, -pos[1] + center[1] + tile.map.tileSize / 2);
+                        for (int k = 0; k < polygon[ j ].Count - 1; k++)
+                        {
+                            JSONObject subpolygon = polygon[ j ];
 
-                        pos = tile.map.latLonToPixels(polygon[ j + 1][1].n, polygon[ j+1 ][0].n);
-                        Vector3 b = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 0, -pos[1] + center[1] + tile.map.tileSize / 2);
-                        appendSegment(a, b, width, ref tmpIndices, ref tmpVertices);
-                        //Debug.Log( i + " multi " + j + " " + a.x + " " + b.x);
-                        
+                            float[] pos = tile.map.latLonToPixels(subpolygon[ k ][1].n, subpolygon[ k ][0].n);
+                            Vector3 a = new Vector3(pos[0] - tileCenter[0] - tile.map.tileSize / 2, 0, -pos[1] + tileCenter[1] + tile.map.tileSize / 2);
+
+                            pos = tile.map.latLonToPixels(subpolygon[k + 1][1].n, subpolygon[k + 1][0].n);
+                            Vector3 b = new Vector3(pos[0] - tileCenter[0] - tile.map.tileSize / 2, 0, -pos[1] + tileCenter[1] + tile.map.tileSize / 2);
+
+                            appendSegment(a, b, width, ref tmpIndices, ref tmpVertices);
+                            //Debug.Log( i + " multi " + j + " " + a.x + " " + b.x);
+                        }
                     }
                 }
             }
@@ -125,6 +142,7 @@ namespace XYZMap
 
             pos = tile.map.latLonToPixels(polygon[1][1].n, polygon[1][0].n);
             Vector3 b = new Vector3(pos[0] - center[0] - tile.map.tileSize / 2, 0, -pos[1] + center[1] + tile.map.tileSize / 2);
+
             appendSegment(a, b, width, ref tmpIndices, ref tmpVertices);
 
         }
@@ -155,16 +173,7 @@ namespace XYZMap
             tmpIndices.Add(id+2);
             tmpIndices.Add(id+3);
             tmpIndices.Add(id);
-
-            //back
-            tmpIndices.Add(id + 1);
-            tmpIndices.Add(id);
-            tmpIndices.Add(id + 2);
-
-            tmpIndices.Add(id + 2);
-            tmpIndices.Add(id);
-            tmpIndices.Add(id + 3);
-
+            
             tmpVertices.Add(ln0);
             tmpVertices.Add(ln1);
             tmpVertices.Add(rn1);
@@ -176,13 +185,13 @@ namespace XYZMap
         {
             gameObject.SetActive(active);
 
-            Vector3 pos = tile.map.parent.gameObject.transform.position;
-
             if (tile.map.parent.renderToTexture)
             {
+                Vector3 pos = tile.map.parent.gameObject.transform.position;
                 gameObject.hideFlags = HideFlags.HideInHierarchy;
                 pos.y = tile.map.parent.orthographicCamera.transform.position.y;
             }
+
             if (active)
             {
                 float[] p = tile.map.latLonToPixels(lat, lng);
