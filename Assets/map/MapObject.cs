@@ -24,7 +24,7 @@ public class MapObject : MonoBehaviour {
     public bool flatNormals = true;
 
     public bool tiles3d = false;
-    public string diffuseProviderUrl = "http://a.tile.openstreetmap.org/{z}/{x}/{y}.png";//"http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+    public string diffuseProviderUrl = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";//"http://a.tile.openstreetmap.org/{z}/{x}/{y}.png";//
     public string elevationProviderUrl = "https://tile.mapzen.com/mapzen/terrain/v1/terrarium/{z}/{x}/{y}.png?api_key=mapzen-foW3wh2";
     public string normalProviderUrl = "https://tile.mapzen.com/mapzen/terrain/v1/normal/{z}/{x}/{y}.png?api_key=mapzen-foW3wh2";
 

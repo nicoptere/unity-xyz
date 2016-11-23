@@ -32,7 +32,7 @@ namespace XYZMap
                 gameObject.transform.localScale = new Vector3(map.tileSize, map.tileSize, map.tileSize);
                 
                 Renderer renderer = gameObject.GetComponent<Renderer>();
-                renderer.material = new Material( Shader.Find("Standard") );
+                //renderer.material = new Material();// Shader.Find("Standard") );
                 material = renderer.material;
 
                 url = getMapUrl(map.parent.normalProviderUrl);
@@ -44,21 +44,23 @@ namespace XYZMap
             {
                 //Debug.Log("1 >" + url);
                 material.SetTexture( "_BumpMap", www.texture );
-                material.SetFloat("_Metallic", 0.8f);
-                material.SetFloat("_Glossiness", 0.8f);
-                material.SetColor("_Color", new Color( 0.2f, 0.2f, 0.2f));
+                //material.SetFloat("_Metallic", 0.8f);
+                //material.SetFloat("_Glossiness", 0.8f);
+                //material.SetColor("_Color", new Color( 0.1f, 0.1f, 0.1f));
 
                 url = getMapUrl(map.parent.diffuseProviderUrl);
-                loaded = true;
+                loaded = false;
+                texId++;
             }
             else
             {
                 //Debug.Log("2 >" + url);
                 material.mainTexture = www.texture;
-                material.SetFloat("_Metallic", 0.2f);
-                material.SetFloat("_Glossiness", 0.25f);
+                //material.SetFloat("_Metallic", 0.2f);
+                //material.SetFloat("_Glossiness", 0.25f);
+                //material.SetColor("_Color", new Color(1,1,1));
 
-                loaded = false;
+                loaded = true;
                 texId++;
 
             }
