@@ -44,7 +44,7 @@ namespace XYZMap
                 string kind = properties["kind"].str;
                 if (type.IndexOf(kind) == -1)
                 {
-                    Debug.Log(kind);
+                    //Debug.Log(kind);
                     continue;
                 }
 
@@ -98,7 +98,7 @@ namespace XYZMap
 
         void commitMesh( ref List<int> tmpIndices, ref List<Vector3> tmpVertices )
         {
-
+            Debug.Log( "commit mesh");
             // Create the mesh
             Mesh mesh = new Mesh();
             mesh.vertices = tmpVertices.ToArray();

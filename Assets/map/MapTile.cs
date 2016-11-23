@@ -6,13 +6,10 @@ using XYZMap;
 
 public class MapTile{
 
+    public GameObject gameObject;
+
     public Map map;
     public string quadKey;
-
-    public GameObject gameObject;
-    public Texture2D texture;
-    
-    public bool loaded = false;
     
     public float lat;
     public float lng;
@@ -21,6 +18,7 @@ public class MapTile{
     public float zoom = 0;
     
     public string url;
+    public bool loaded = false;
 
     public MapTile() { }
 
@@ -55,6 +53,16 @@ public class MapTile{
        
         url = getMapUrl(tx, ty, zoom);
 
+    }
+
+    public string getMapUrl()
+    {
+        return getMapUrl(map.provider, map.domains, tx, ty, map.zoom);
+    }
+
+    public string getMapUrl( string provider, string[] domains = null )
+    {
+        return getMapUrl( provider, domains, tx, ty, map.zoom);
     }
 
     public string getMapUrl(int x, int y)

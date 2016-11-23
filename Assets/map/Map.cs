@@ -123,6 +123,9 @@ public class Map{
                     if (parent.vectorTiles)
                     {
                         tile = new TileVector(this, key);
+                    }else if( parent.tiles3d)
+                    {
+                        tile = new TileImage3d(this, key);
                     }else
                     {
                         tile = new TileImage(this, key);

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class MapObject : MonoBehaviour {
 
-    public string provider;
+    public string provider = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
     public string[] domains = new string[] { "a", "b", "c" };
 
     public int width = 512;
@@ -22,6 +22,11 @@ public class MapObject : MonoBehaviour {
     public bool vectorTiles = true;
     public string vectorTileUrl = "https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.json?api_key=mapzen-foW3wh2";
     public bool flatNormals = true;
+
+    public bool tiles3d = false;
+    public string diffuseProviderUrl = "http://a.tile.openstreetmap.org/{z}/{x}/{y}.png";//"http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+    public string elevationProviderUrl = "https://tile.mapzen.com/mapzen/terrain/v1/terrarium/{z}/{x}/{y}.png?api_key=mapzen-foW3wh2";
+    public string normalProviderUrl = "https://tile.mapzen.com/mapzen/terrain/v1/normal/{z}/{x}/{y}.png?api_key=mapzen-foW3wh2";
 
     private Map map;
     public Camera orthographicCamera;
@@ -65,7 +70,9 @@ public class MapObject : MonoBehaviour {
 
             gameObject.transform.position = new Vector3(0, -50000, 0);
             gameObject.hideFlags = HideFlags.HideInHierarchy;
+
             vectorTiles = false;
+
         }
 
         if( vectorTiles)
@@ -78,6 +85,14 @@ public class MapObject : MonoBehaviour {
                 provider = vectorTileUrl;
             }
         }
+
+
+        if (tiles3d)
+        {
+            provider = diffuseProviderUrl;
+        }
+
+
 
         //map object
         map = new Map(this, provider, domains, width, height);

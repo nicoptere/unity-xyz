@@ -72,14 +72,12 @@ Shader "Unlit/Wireframe"
 					col.xyz = _Color.xyz;
 				}
 				*/
-
-				///*
+				
 				float d = ( abs( ddx( i.color ) ) + abs( ddy( i.color ) ) ) * _Width;
 				float3 a3 = smoothstep( float3( 0.,0.,0. ), float3(d, d, d), i.color );
 				float value = min( min( a3.x, a3.y ), a3.z );
 				float4 col = (_WireColor * (1 - value) + value * _Color );
-				//*/
-
+				
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				return col;
 			}
