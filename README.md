@@ -4,12 +4,10 @@ a lightweight c# XYZ tile viewer.
 
 ###disclaimer
 This is a side project to learn c# and Unity which implies that the quality of the code as well as the structure might not be as good as you would expect from a regular lib.
-I don't have a clue clue what Unity good practices are and discover things almost by accident.
+I don't have a clue what Unity good practices are and discover things almost by accident.
 
 I won't polish it much, it will keep changing and if you're willing to use in produciton, do so at your own risks.
 Anyway, there are very high chances that you'll have to rebuild everything from scratch :)
-
-I didn't include the Standard Assets, they are required if you 
 
 ##usage
 the XYZ maps use a very efficient way of storing and naming square tiles which is suited for displaying huge maps at different scales (zoom levels).
