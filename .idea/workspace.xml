@@ -2,35 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="671e52b1-b832-4ba4-85b4-a959bf300cd0" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/map/MapObject.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/map/MapObject.cs.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/map/tiles/TileImage3d.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/map/tiles/TileImage3d.cs.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/CameraControls.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/CameraControls.cs.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON/Editor.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON/Editor/JSONChecker.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON/Editor/JSONChecker.cs.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON/JSONObject.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON/JSONObject.cs.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON/JSONTemplates.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON/JSONTemplates.cs.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON/VectorTemplates.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON/VectorTemplates.cs.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON/readme.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/JSON/readme.txt.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/Triangulator.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/vendor/Triangulator.cs.meta" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Assets/test.unity" afterPath="$PROJECT_DIR$/Assets/test.unity" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Assets/map/Map.cs" afterPath="$PROJECT_DIR$/Assets/map/Map.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Assets/map/tiles/TileImage.cs" afterPath="$PROJECT_DIR$/Assets/map/tiles/TileImage.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Assets/map/tiles/TileVector.cs" afterPath="$PROJECT_DIR$/Assets/map/tiles/TileVector.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Assets/map/tiles/vector/TileExtrusion.cs" afterPath="$PROJECT_DIR$/Assets/map/tiles/vector/TileExtrusion.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Assets/map/tiles/vector/TileFlat.cs" afterPath="$PROJECT_DIR$/Assets/map/tiles/vector/TileFlat.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Assets/map/tiles/vector/TileLine.cs" afterPath="$PROJECT_DIR$/Assets/map/tiles/vector/TileLine.cs" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
     </list>
     <ignored path="unity-xyz.iws" />
@@ -56,22 +27,22 @@
     <splitter split-orientation="horizontal" split-proportion="0.6079009">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+          <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/.gitignore">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="578">
-                  <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
+                <state relative-caret-position="391">
+                  <caret line="23" column="11" selection-start-line="23" selection-start-column="11" selection-end-line="23" selection-end-column="11" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+          <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/README.md">
               <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
                 <state split_layout="FIRST">
-                  <first_editor relative-caret-position="75">
-                    <caret line="73" column="34" selection-start-line="73" selection-start-column="34" selection-end-line="73" selection-end-column="34" />
+                  <first_editor relative-caret-position="204">
+                    <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
                     <folding />
                   </first_editor>
                   <second_editor />
@@ -112,8 +83,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -293,12 +264,12 @@
       <option name="presentableId" value="Default" />
       <updated>1479932258687</updated>
       <workItem from="1479932259992" duration="19000" />
-      <workItem from="1479932286369" duration="16824000" />
+      <workItem from="1479932286369" duration="17097000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="16843000" />
+    <option name="totallyTimeSpent" value="17116000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="0" width="1924" height="1047" extended-state="0" />
@@ -371,11 +342,19 @@
         <state />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="23" column="11" selection-start-line="23" selection-start-column="11" selection-end-line="23" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="FIRST">
-          <first_editor relative-caret-position="75">
-            <caret line="73" column="34" selection-start-line="73" selection-start-column="34" selection-end-line="73" selection-end-column="34" />
+          <first_editor relative-caret-position="204">
+            <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
             <folding />
           </first_editor>
           <second_editor />
@@ -383,14 +362,6 @@
       </provider>
       <provider editor-type-id="MarkdownFxPreviewEditor">
         <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-          <folding />
-        </state>
       </provider>
     </entry>
   </component>
