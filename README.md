@@ -71,10 +71,14 @@ under the vector tiles submenu, check `vector tiles`
 
 * the `per face normals` bool will indicate whether or not you want to get a "flat" look, by default Unity will recompute per vertex normals giving the meshes a smooth look like this:
 ![pfn_off](img/perfacenormal_off.png)
+
 while if you activate `per face normals`, you'll get this:
+
 ![pfn_off](img/perfacenormal_on.png)
+
 note that this is achieved by creating extra vertices, the meshes are therefore much heavier than they should.
-* the vector tile provider : in my case Mapzen. the url contains the API key.
+
+* the vector tile provider : in my case Mapzen.
 * the colors for the various features: Buildings, earth, land use, water, roads and rails.
 * for the roads and rails (that are originally non renderable lines), the width at which it should be extruded.
 
