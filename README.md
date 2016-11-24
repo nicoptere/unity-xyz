@@ -112,11 +112,11 @@ that's what it would look like
 ![elevation render](img/elevation2.png)
 ![elevation render](img/elevation3.png)
 
+the elevations' scale is set in meters, if you don't see anything, it's probably that your camera is below the ground.
 
 you'll notice creases between tiles, this comes from the precision of Floats, and sometimes from the tiles themselves
 I'll try to solve the problem some day.
- 
-
+  
 
 
  
