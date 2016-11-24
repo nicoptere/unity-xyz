@@ -81,12 +81,6 @@ public class Map{
         }
     }
 
-    /**
-     * sets the map view
-     * @param lat
-     * @param lng
-     * @param zoom
-     */
     public void setView(float lat, float lng, float zoom )
     {
         latitude = lat;
@@ -120,13 +114,16 @@ public class Map{
                 if (!exist){
 
                     MapTile tile;
+
                     if (parent.vectorTiles)
                     {
                         tile = new TileVector(this, key);
-                    }else if( parent.tiles3d)
+                    }
+                    else if( parent.tilesElevetion )
                     {
-                        tile = new TileImage3d(this, key);
-                    }else
+                        tile = new TileElevation(this, key);
+                    }
+                    else
                     {
                         tile = new TileImage(this, key);
                     }

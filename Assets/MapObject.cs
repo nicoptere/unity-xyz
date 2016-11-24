@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class MapObject : MonoBehaviour {
 
+    [Header("Common Settings")]
     public string provider = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
     public string[] domains = new string[] { "a", "b", "c" };
 
@@ -13,24 +14,48 @@ public class MapObject : MonoBehaviour {
     public float latitude;
     public float longitude;
     public float zoom;
-
     public GameObject tiles;
+    
+    [Header("Render To Texture")]
     public bool renderToTexture = false;
-    public GameObject rttMesh;
     public string layerName = "map";
+    public GameObject rttMesh;
+    public Camera orthographicCamera;
 
+    [Header("Vector Tiles")]
     public bool vectorTiles = true;
+    public bool perFaceNormals = true;
     public string vectorTileUrl = "https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.json?api_key=mapzen-foW3wh2";
-    public bool flatNormals = true;
 
-    public bool tiles3d = false;
-    public string diffuseProviderUrl = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";//"http://a.tile.openstreetmap.org/{z}/{x}/{y}.png";//
+    static float div = (float) 1 / 0xFF;
+
+    public Color colorBuildings = new Color(242,229,208,255) * div;
+    public Color colorLandUse   = new Color(95,216,111,255) * div;
+    public Color colorEarth     = new Color(223,166,123,255) * div;
+    public Color colorWater     = new Color(65,190,202,255) * div;
+
+
+    public Color colorRoads     = new Color(.2f, .2f, .2f, 1);
+    [Range(1, 10)]
+    public float roadWidth      = 3;
+    public Color colorRails     = new Color(.8f, .8f, .8f, 1);
+    [Range(1, 10)]
+    public float railWidth = 3;
+
+
+
+    [Header("Elevation Tiles")]
+    public bool tilesElevetion = false;
+    [Range( 2, 254)]
+    public int meshResolution = 64;
+
+    public string diffuseProviderUrl = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
     public string elevationProviderUrl = "https://tile.mapzen.com/mapzen/terrain/v1/terrarium/{z}/{x}/{y}.png?api_key=mapzen-foW3wh2";
     public string normalProviderUrl = "https://tile.mapzen.com/mapzen/terrain/v1/normal/{z}/{x}/{y}.png?api_key=mapzen-foW3wh2";
-
+    
     private Map map;
-    public Camera orthographicCamera;
     private RenderTexture RT;
+    
     
     void Awake()
     {
@@ -70,30 +95,9 @@ public class MapObject : MonoBehaviour {
 
             gameObject.transform.position = new Vector3(0, -50000, 0);
             gameObject.hideFlags = HideFlags.HideInHierarchy;
-
-            vectorTiles = false;
-
+            
         }
-
-        if( vectorTiles)
-        {
-            if (vectorTileUrl == "")
-            {
-                vectorTiles = false;
-            }else
-            {
-                provider = vectorTileUrl;
-            }
-        }
-
-
-        if (tiles3d)
-        {
-            provider = diffuseProviderUrl;
-        }
-
-
-
+        
         //map object
         map = new Map(this, provider, domains, width, height);
         

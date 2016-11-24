@@ -178,7 +178,7 @@ namespace XYZMap
             
             // Create the mesh
             Mesh mesh = new Mesh();
-            if (tile.map.parent.flatNormals)
+            if (tile.map.parent.perFaceNormals)
             {
                 List<Vector3> vertices = new List<Vector3>();
                 List<Color> colors = new List<Color>();
@@ -218,7 +218,7 @@ namespace XYZMap
             filter.mesh = mesh;
 
             Renderer renderer = gameObject.GetComponent<Renderer>();
-            if (tile.map.parent.flatNormals)
+            if (tile.map.parent.perFaceNormals)
             {
                 /*
                 Material mat = new Material(Shader.Find("Unlit/Wireframe"));
@@ -237,9 +237,8 @@ namespace XYZMap
 
         }
 
-        public void Update(bool active)
+        public void Update(bool active )
         {
-
             gameObject.SetActive(active);
             if (active)
             {
@@ -250,8 +249,6 @@ namespace XYZMap
                 if (-p[1] < -tile.map.height / 2 || -p[1] > tile.map.height / 2) active = false;
 
             }
-            Renderer renderer = gameObject.GetComponent<Renderer>();
-            renderer.material.color = active == true ? new Color(1, 1, 0) : new Color(0, .3f, .6f);
             
         }
 

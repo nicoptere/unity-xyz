@@ -84,7 +84,7 @@ namespace XYZMap
             go.GetComponent<MeshFilter>().mesh = mesh;
             go.AddComponent(typeof(MeshRenderer));
             go.SetActive(false);
-            go.hideFlags = HideFlags.HideInHierarchy;
+            //go.hideFlags = HideFlags.HideInHierarchy;
             if (map.parent.renderToTexture) go.layer = LayerMask.NameToLayer(map.parent.layerName);
             return go;
 

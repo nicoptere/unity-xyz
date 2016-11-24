@@ -65,7 +65,7 @@ namespace XYZMap
 
             // Create the mesh
             Mesh mesh = new Mesh();
-            if (tile.map.parent.flatNormals)
+            if (tile.map.parent.perFaceNormals)
             {
                 List<Vector3> vertices = new List<Vector3>();
                 List<int> indices = new List<int>();
@@ -113,9 +113,9 @@ namespace XYZMap
                                             //renderer.material = new Material(  Shader.Find("Toon/Lit Outline"));//Shader.Find("Unlit/Color"));//
                                             //renderer.material.SetFloat("_Outline", .001f);
 
-            Material mat = new Material(Shader.Find("Unlit/Wireframe"));
-            mat.SetColor("Color", color);
-            renderer.material = mat;
+//            Material mat = new Material(Shader.Find("Unlit/Wireframe"));
+//            mat.SetColor("Color", color);
+//            renderer.material = mat;
 
             //renderer.material = new Material( Shader.Find("Unlit/Color"));
             //renderer.material.SetFloat("_Metallic", .5f);

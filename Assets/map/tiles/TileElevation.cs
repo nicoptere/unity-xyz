@@ -3,15 +3,13 @@ using UnityEngine;
 
 namespace XYZMap
 {
-    class TileImage3d : MapTile
+    class TileElevation : MapTile
     {
-        public Texture2D texture;
-
 
         private int texId = 0;
         private Material material;
 
-        public TileImage3d(Map map, string quadKey)
+        public TileElevation(Map map, string quadKey)
         {
             this.map = map;
             this.quadKey = quadKey;
@@ -26,7 +24,7 @@ namespace XYZMap
 
             if( texId == 0)
             {
-                //Debug.Log( "0 >" + url);
+                //Debug.Log( "0 >" + url + " " + www.texture );
                 gameObject = createMesh( www.texture );
                 gameObject.transform.parent = map.parent.tiles.transform;
                 gameObject.transform.localScale = new Vector3(map.tileSize, map.tileSize, map.tileSize);
@@ -42,7 +40,7 @@ namespace XYZMap
             }
             else if( texId == 1)
             {
-                //Debug.Log("1 >" + url);
+                //Debug.Log("1 >" + url + " " + www.texture);
                 material.SetTexture( "_BumpMap", www.texture );
                 //material.SetFloat("_Metallic", 0.8f);
                 //material.SetFloat("_Glossiness", 0.8f);
@@ -87,19 +85,20 @@ namespace XYZMap
         float lerp(float t, float a, float b) { return a + t * (b - a); }
         float norm(float t, float a, float b) { return (t - a) / (b - a); }
         float _map(float t, float a0, float b0, float a1, float b1 ) { return lerp(norm(t, a0, b0), a1, b1); }
+
         GameObject createMesh( Texture2D texture)
         {
             GameObject go = new GameObject();
-            
-
             Mesh mesh = new Mesh();
 
-            int xSize = 64;
-            int ySize = 64;
+            int xSize = map.parent.meshResolution;
+            int ySize = map.parent.meshResolution;
 
             float scale = (float) 1.0 / xSize;
             float mapScale = 1 / map.resolution(map.zoom);
 
+
+            Debug.Log(texture.width);
             Color[] colors = texture.GetPixels(0,0,255,255);
 
             Vector3[] vertices = new Vector3[(xSize + 1) * (ySize + 1)];
@@ -116,7 +115,7 @@ namespace XYZMap
                     Color c = texture.GetPixel( px,py );
                     float height = mapScale * (c.r * 256f + c.g + c.b / 256f);// - 32768f;
 
-                    vertices[i] = new Vector3( x*scale, height, y * scale );  
+                    vertices[i] = new Vector3( x*scale + 1, height, y * scale + 1 );  
                     uvs[i] = new Vector2(x*scale, y*scale);
                 }
             }

@@ -17,12 +17,19 @@ namespace XYZMap
             this.map = map;
             this.quadKey = quadKey;
             initFromQuadKey(quadKey);
+            url = getMapUrl(map.parent.vectorTileUrl);
         }
 
         public override void Update( bool active )
         {
             if (!loaded) return;
 
+            foreach (TileLine line in lines)
+            {
+                line.Update(active);
+            }
+
+            return;
             foreach (TilePOI poi in pois)
             {
                 poi.Update(active);
@@ -47,39 +54,54 @@ namespace XYZMap
             }
 
             JSONObject obj = new JSONObject(www.text);
-            /*
-            JSONObject POIData = obj["pois"]["features"];
-            for (int i = 0; i < POIData.Count; i++)
-            {
-                Debug.Log(POIData[i]);
-                pois.Add( new TilePOI( this, POIData[i] ) );
-            }
-            //*/
-
-            Color color = new Color(Random.value + .5f, Random.value + .5f, Random.value + .5f);
             
             //buildings
-            extrusions.Add(new TileExtrusion(this, obj["buildings"]["features"], map.parent.tiles, color ));
-            
+            if (map.parent.colorBuildings.a != 0)
+            {
+                extrusions.Add(new TileExtrusion(this, obj["buildings"]["features"], map.parent.tiles, map.parent.colorBuildings));
+            }
+
             //landuse
-            flats.Add(new TileFlat(this, obj["landuse"]["features"], map.parent.tiles, color, -2 ));
-            
+            if (map.parent.colorLandUse.a != 0)
+            {
+                flats.Add(new TileFlat(this, obj["landuse"]["features"], map.parent.tiles, map.parent.colorLandUse, -0.5F));
+            }
+
             //earth 
-            flats.Add(new TileFlat(this, obj["earth"]["features"], map.parent.tiles, color, -4 ));
+            if (map.parent.colorEarth.a != 0)
+            {
+                flats.Add(new TileFlat(this, obj["earth"]["features"], map.parent.tiles, map.parent.colorEarth, -1));
+            }
 
             //water
-            color = new Color(0, 0.3f, 0.8f);
-            flats.Add(new TileFlat(this, obj["water"]["features"], map.parent.tiles, color,-3 ));
+            if (map.parent.colorWater.a != 0)
+            {
+                flats.Add(new TileFlat(this, obj["water"]["features"], map.parent.tiles, map.parent.colorWater, -2));
+            }
+
 
 
             //roads types:
             //highway, major_road, minor_road, path, aeroway, rail, ferry, piste, aerialway, racetrack, portage_way
 
             float scale = 1 / map.resolution(map.zoom);
+            if (map.parent.colorRoads.a != 0)
+            {
+                List<string> roads = new List<string>(new string[] { "highway", "major_road", "minor_road" });
+                TileLine tl = new TileLine(this, obj["roads"]["features"], map.parent.tiles, map.parent.colorRoads, roads, map.parent.roadWidth * scale);
+                lines.Add(tl);
+            }
 
-            color = new Color( 1,0,0 );// Random.value + .5f, Random.value + .5f, Random.value + .5f);
-            List<string> roads = new List<string>(new string[] { "highway", "major_road", "minor_road" });
-            lines.Add(new TileLine(this, obj["roads"]["features"], map.parent.tiles, color, roads, 2 * scale ));
+            if (map.parent.colorRails.a != 0)
+            {
+                List<string> rails = new List<string>(new string[] { "rail" });
+                TileLine tl = new TileLine(this, obj["roads"]["features"], map.parent.tiles, map.parent.colorRails, rails, map.parent.railWidth * scale);
+                lines.Add(tl);
+                tl.gameObject.transform.position = new Vector3(0, .25f, 0);
+            }
+
+            loaded = true;
+
             /*
             color = new Color( 0,1,0 );
             List<string> rails = new List<string>(new string[] { "rail" });
@@ -89,6 +111,16 @@ namespace XYZMap
             List<string> boats = new List<string>(new string[] { "ferry" });
             lines.Add(new TileLine(this, obj["roads"]["features"], map.parent.tiles, color, boats, 10 * scale));
             //*/
+
+            /*
+            JSONObject POIData = obj["pois"]["features"];
+            for (int i = 0; i < POIData.Count; i++)
+            {
+                Debug.Log(POIData[i]);
+                pois.Add( new TilePOI( this, POIData[i] ) );
+            }
+            //*/
+
         }
 
     }

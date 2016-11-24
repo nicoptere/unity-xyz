@@ -11,7 +11,7 @@ namespace XYZMap
         MapTile tile;
         JSONObject data;
         GameObject parent;
-        GameObject gameObject;
+        public GameObject gameObject;
         private Color color;
 
         static private List<int> built = new List<int>();
